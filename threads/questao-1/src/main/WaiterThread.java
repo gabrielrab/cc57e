@@ -1,48 +1,46 @@
 import java.util.Random;
-
-import model.GarsomClass;
-
 import java.util.ArrayList;
 import java.util.List;
 
-class GarcomThread implements Runnable {
+class WaiterThread extends Thread {
     private int idGarcom;
     private int capacity;
+    private int currentCapacity = 0;
 
-    public GarcomThread(int id, int CAPACIDADE_GARCONS) {
+    public WaiterThread(int id, int WAITER_CAPACITY) {
         this.idGarcom = id;
-        this.capacity = CAPACIDADE_GARCONS;
+        this.capacity = WAITER_CAPACITY;
 
     }
 
     @Override
     public void run() {
+
         List<Integer> idCliente = new ArrayList<>();
-        while (Bar.barAberto) {
+
+        while (Bar.barOpen) {
             try {
                 Random random = new Random();
-                GarsomClass current = Bar.garcoms.get(idGarcom);
 
                 // Pegar pedidos
 
                 synchronized (Bar.Lock) {
-                    if (!Bar.filaPedidos.isEmpty()) {
-                        int id = Bar.filaPedidos.poll();
+                    if (!Bar.queueOrders.isEmpty()) {
+                        int id = Bar.queueOrders.poll();
                         idCliente.add(id);
-                        Bar.filaPedidosPreparo.add(id);
+                        Bar.queueOrdersToPrepare.add(id);
                         System.out.println("\n\n  Garçom " + (idGarcom + 1) + " retirou pedido do cliente "
                                 + (id + 1));
                         Thread.sleep(1000);
-                        synchronized (current) {
-                            current.currentCapacity++;
-                            if (current.currentCapacity == capacity) {
-                                Bar.garconsDisponiveis.acquire();
-                            }
+                        currentCapacity++;
+                        if (currentCapacity == capacity) {
+                            Bar.waitersAvailable.acquire();
                         }
+
                     }
                 }
 
-                if (idCliente.size() != 0  && (idCliente.size() == capacity || Bar.filaPedidos.isEmpty())) {
+                if (idCliente.size() != 0 && (idCliente.size() == capacity || Bar.queueOrders.isEmpty())) {
 
                     Thread.sleep(2000);
 
@@ -52,14 +50,13 @@ class GarcomThread implements Runnable {
                         Thread.sleep((long) (2000)); // tempo para levar até o bartender
                         boolean prepared = false;
                         while (!prepared) {
-                            try{
-                                Bar.preparoBartender.acquire();
-                            }
-                            finally{
+                            try {
+                                Bar.preparationBartender.acquire();
+                            } finally {
                                 new Thread(new BartenderThread(id)).start();
-                                Thread.sleep(3000);
+                                Thread.sleep(3000); // espera o preparo
                                 prepared = true;
-                                Bar.preparoBartender.release();
+                                Bar.preparationBartender.release();
                             }
                         }
 
@@ -67,20 +64,20 @@ class GarcomThread implements Runnable {
 
                         Thread.sleep((long) (random.nextInt(3) * 1000));
 
-                        System.out.println("\n\n  Garçom " + (idGarcom + 1) + " entregou pedido ao cliente " + (id + 1));
+                        System.out
+                                .println("\n\n  Garçom " + (idGarcom + 1) + " entregou pedido ao cliente " + (id + 1));
 
                         synchronized (Bar.Lock) {
-                            Bar.filaPedidosPreparo.remove(id);
-                            Bar.clientesAtendidos++;
+                            Bar.queueOrdersToPrepare.remove(id);
+                            Bar.customersServed++;
                         }
 
                     }
 
                     Thread.sleep(3000);// Pausa entre atendimentos
                     synchronized (Bar.Lock) {
-                        Bar.garconsDisponiveis.release();
-                        current.isAvailable = true;
-                        current.currentCapacity = 0;
+                        Bar.waitersAvailable.release();
+                        currentCapacity = 0;
                         idCliente.clear();
                     }
                     System.out.println("\n\n  Garçom " + (idGarcom + 1) + " está disponivel");

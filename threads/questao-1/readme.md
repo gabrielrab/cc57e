@@ -5,23 +5,22 @@
 sequenceDiagram
     participant User
     participant Bar
-    participant GarcomThread
-    participant ClienteThread
-    participant RodadaController
+    participant WaiterThread
+    participant ClientThread
+    participant roundController
     participant BartenderThread
-    participant GarsomClass
 
     User ->> Bar: start()
-    Bar ->> GarcomThread: new GarcomThread()
-    Bar ->> ClienteThread: new ClienteThread()
-    Bar ->> RodadaController: new RodadaController()
+    Bar ->> WaiterThread: new WaiterThread()
+    Bar ->> ClientThread: new ClientThread()
+    Bar ->> roundController: new roundController()
 
-    loop Cada rodada
-        RodadaController ->> GarcomThread: iniciar rodada
-        ClienteThread ->> GarcomThread: fazer pedido
-        GarcomThread ->> BartenderThread: entregar pedido
-        BartenderThread ->> GarcomThread: preparar pedido
-        GarcomThread ->> ClienteThread: entregar pedido
+    loop Cada round
+        roundController ->> WaiterThread: iniciar round
+        ClientThread ->> WaiterThread: fazer pedido
+        WaiterThread ->> BartenderThread: entregar pedido
+        BartenderThread ->> WaiterThread: preparar pedido
+        WaiterThread ->> ClientThread: entregar pedido
     end
 
 

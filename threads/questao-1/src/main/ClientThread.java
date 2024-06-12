@@ -1,10 +1,10 @@
 import java.util.Random;
 
-class ClienteThread implements Runnable {
+class ClientThread extends Thread {
     private int idCliente;
     Random random = new Random();
 
-    public ClienteThread(int id) {
+    public ClientThread(int id) {
         this.idCliente = id;
     }
 
@@ -19,26 +19,26 @@ class ClienteThread implements Runnable {
 
         System.err.println("\nCliente " + (idCliente + 1) + " entrou no restaurante.");
 
-        while (Bar.barAberto) {
+        while (Bar.barOpen) {
             Random random2 = new Random();
             try {
 
                 Thread.sleep((long) (random2.nextInt(6) * 1000));
 
-                int availablePermits = Bar.garconsDisponiveis.availablePermits();
+                int availablePermits = Bar.waitersAvailable.availablePermits();
                 if (availablePermits != 0) {
                     // Fazer pedido
-                    boolean exist = Bar.filaPedidos.contains(idCliente);
+                    boolean exist = Bar.queueOrders.contains(idCliente);
                     if (exist == false) {
                         synchronized (Bar.Lock) {
-                            Bar.filaPedidos.add(idCliente);
+                            Bar.queueOrders.add(idCliente);
                             System.out.println(
                                     "\n\nCliente " + (idCliente + 1) + " chamou um garçom para realizar um pedido.");
                         }
                         System.out.println("\n\nCliente " + (idCliente + 1) + " está esperando por garçons");
 
-                        while (Bar.filaPedidos.contains(idCliente)) {
-                            if (!Bar.filaPedidos.contains(idCliente)) {
+                        while (Bar.queueOrders.contains(idCliente)) {
+                            if (!Bar.queueOrders.contains(idCliente)) {
                                 break;
                             }
                             Thread.sleep(1000);
@@ -46,8 +46,8 @@ class ClienteThread implements Runnable {
 
                         System.out.println("\n\nCliente " + (idCliente + 1) + " está esperando seu pedido.");
 
-                        while (Bar.filaPedidosPreparo.contains(idCliente)) {
-                            if (!Bar.filaPedidosPreparo.contains(idCliente)) {
+                        while (Bar.queueOrdersToPrepare.contains(idCliente)) {
+                            if (!Bar.queueOrdersToPrepare.contains(idCliente)) {
                                 break;
                             }
                             Thread.sleep(1000);

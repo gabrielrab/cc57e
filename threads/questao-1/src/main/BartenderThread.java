@@ -1,4 +1,4 @@
-public class BartenderThread implements Runnable {
+public class BartenderThread extends Thread {
 
     private Integer idCliente;
 
