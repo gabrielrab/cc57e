@@ -1,5 +1,5 @@
 
-### Diagrama de Atividades - Bar
+### Diagrama de Sequencia - Bar
 
 ```mermaid
 sequenceDiagram
