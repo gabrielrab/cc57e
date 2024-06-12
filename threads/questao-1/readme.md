@@ -11,9 +11,13 @@ sequenceDiagram
     participant BartenderThread
 
     User ->> Bar: rodar programa
-    Bar ->> WaiterThread: cria WaiterThread()
-    Bar ->> ClientThread: cria ClientThread()
-    Bar ->> roundController: cria roundController()
+    loop Cada NUM_Waiter
+        Bar ->> WaiterThread: criar WaiterThread()
+    end
+    loop Cada NUM_Client
+        Bar ->> ClientThread: criar ClientThread()
+    end
+    Bar ->> roundController: criar roundController()
 
     loop Cada round
         roundController ->> WaiterThread: iniciar round
