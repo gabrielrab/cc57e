@@ -10,10 +10,10 @@ sequenceDiagram
     participant roundController
     participant BartenderThread
 
-    User ->> Bar: start()
-    Bar ->> WaiterThread: new WaiterThread()
-    Bar ->> ClientThread: new ClientThread()
-    Bar ->> roundController: new roundController()
+    User ->> Bar: rodar programa
+    Bar ->> WaiterThread: cria WaiterThread()
+    Bar ->> ClientThread: cria ClientThread()
+    Bar ->> roundController: cria roundController()
 
     loop Cada round
         roundController ->> WaiterThread: iniciar round
