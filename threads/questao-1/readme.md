@@ -38,3 +38,22 @@ public static void main(final String[] args) {
         clientesCriados += 1;
     }
 }
+
+
+### Diagrama de Sequência Atualizado
+
+Para criar um diagrama de sequência mais completo, agora temos as seguintes interações detalhadas:
+
+1. **Inicialização do Bar**:
+    - Iniciar threads para garçons (`GarcomThread`).
+    - Iniciar o controlador de rodadas (`RodadaController`).
+    - Iniciar threads para clientes (`ClienteThread`).
+
+2. **Execução de Rodadas**:
+    - `RodadaController` inicia cada rodada.
+    - `ClienteThread` faz pedidos.
+    - `GarcomThread` coleta pedidos e entrega para o bartender (`BartenderThread`).
+    - `BartenderThread` prepara pedidos.
+    - `GarcomThread` entrega pedidos aos clientes.
+
+Ainda precisamos do código da classe `GarsomClass.java` para garantir que todos os detalhes estão cobertos no diagrama de execução. Por favor, forneça o conteúdo dessa classe.
