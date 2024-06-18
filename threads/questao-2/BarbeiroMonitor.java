@@ -29,7 +29,7 @@ public class BarbeiroMonitor {
 
             clientesEsperando.signal();
 
-            System.out.println("Cliente " + clienteId + " sentou na cadeira.");
+            System.out.println("Cliente " + clienteId + " sentou na cadeira. Existem " + cadeirasLivres + " cadeiras livres.");
 
             clientesEsperando.await();
 
@@ -55,10 +55,11 @@ public class BarbeiroMonitor {
 
             if (clienteId != null) {
                 System.out.println("Barbeiro acordou e está cortando cabelo do cliente " + clienteId + "...");
-                clientesEsperando.signal();
 
                 // Tempo de corte de cabelo
                 Thread.sleep(1000);
+
+                clientesEsperando.signal();
 
                 System.out.println("Barbeiro terminou de cortar cabelo do cliente " + clienteId + ".");
             }
@@ -68,8 +69,8 @@ public class BarbeiroMonitor {
     }
 
     public static void main(String[] args) {
-        int cadeiras = 1;
-        int clientes = 5;
+        int cadeiras = 3;
+        int clientes = 10;
         Random random = new Random();
 
         BarbeiroMonitor barbearia = new BarbeiroMonitor(cadeiras);
