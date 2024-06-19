@@ -37,7 +37,7 @@ O protocolo de comunicação entre clientes e servidor é baseado em comandos re
     ```
 
 
-Fluxo:
+```mermaid
 sequenceDiagram
     participant Client
     participant FortuneClient
@@ -70,3 +70,4 @@ sequenceDiagram
             FortuneClient->>Client: Exibe lista de frases
         end
     end
+```
