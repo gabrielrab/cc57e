@@ -37,4 +37,36 @@ O protocolo de comunicação entre clientes e servidor é baseado em comandos re
     ```
 
 
-[![](https://mermaid.ink/img/pako:eNqtlE1OwzAQha9ied1eIItKFS2wqChqyy6bwZ5Si8QTHKfiRz0NCw6AOEEvxjRuFCWkRUREWTjjec_z2RO_SUUaZSRzfCrQKpwYeHCQxlbwk4HzRpkMrBcXiUHrf8YvyfnC4i_TS3RbdKdcr8Hq5DAdEkJwOBo1vCMxtVsDQlHK6RRSGxm1IiwXiQuyqDwIIJFzyGhyDV3IY12jDtY5XsjSFoTfOAR9qBkECVWmYVVoQpSJeYYO9h_7L8xD9I8IXRitclYObJ4aj7Wy1kLixdV0NbycL1Z3N9N6oq7jaPTTeIkJKkMWxNpBjuyF4PefTH_epkW1QE-uMmkqu8l4I57NPbYFmHAN48mkF8tYm4BSnltHKb9AcK-sjUu5WbTh43ynv4Coo7glLIHubnsC-QIS81qdDT6b3Ifu60V1dPtXtNmyX9_NGIX_LdKQC35LwLxXyyWlk8ZOj_NgJ6VodfgoB3IgU2R-o_mafDtMxNJvMMVYRjzU4B5jGdsd50HhaflilYy8K3AgHRUPGxmtgfdqIItMg68u2GN09w3m09Uk?type=png)](https://mermaid.live/edit#pako:eNqtlE1OwzAQha9ied1eIItKFS2wqChqyy6bwZ5Si8QTHKfiRz0NCw6AOEEvxjRuFCWkRUREWTjjec_z2RO_SUUaZSRzfCrQKpwYeHCQxlbwk4HzRpkMrBcXiUHrf8YvyfnC4i_TS3RbdKdcr8Hq5DAdEkJwOBo1vCMxtVsDQlHK6RRSGxm1IiwXiQuyqDwIIJFzyGhyDV3IY12jDtY5XsjSFoTfOAR9qBkECVWmYVVoQpSJeYYO9h_7L8xD9I8IXRitclYObJ4aj7Wy1kLixdV0NbycL1Z3N9N6oq7jaPTTeIkJKkMWxNpBjuyF4PefTH_epkW1QE-uMmkqu8l4I57NPbYFmHAN48mkF8tYm4BSnltHKb9AcK-sjUu5WbTh43ynv4Coo7glLIHubnsC-QIS81qdDT6b3Ifu60V1dPtXtNmyX9_NGIX_LdKQC35LwLxXyyWlk8ZOj_NgJ6VodfgoB3IgU2R-o_mafDtMxNJvMMVYRjzU4B5jGdsd50HhaflilYy8K3AgHRUPGxmtgfdqIItMg68u2GN09w3m09Uk)
+Fluxo:
+sequenceDiagram
+    participant Client
+    participant FortuneClient
+    participant FortuneServer
+    participant ClientHandler
+
+    Client->>FortuneClient: Envia comando
+    FortuneClient->>FortuneServer: Conecta ao servidor
+    FortuneServer->>ClientHandler: Cria nova thread para o cliente
+
+    loop Operações
+        Client->>FortuneClient: Envia comando
+        FortuneClient->>ClientHandler: Transmite comando
+
+        alt GET-FORTUNE
+            ClientHandler->>ClientHandler: Seleciona frase aleatória
+            ClientHandler->>FortuneClient: Retorna frase
+            FortuneClient->>Client: Exibe frase
+        else ADD-FORTUNE
+            ClientHandler->>ClientHandler: Adiciona nova frase
+            ClientHandler->>FortuneClient: Confirma adição
+            FortuneClient->>Client: Exibe confirmação
+        else UPD-FORTUNE
+            ClientHandler->>ClientHandler: Atualiza frase existente
+            ClientHandler->>FortuneClient: Confirma atualização
+            FortuneClient->>Client: Exibe confirmação
+        else LST-FORTUNE
+            ClientHandler->>ClientHandler: Lista todas as frases
+            ClientHandler->>FortuneClient: Retorna lista de frases
+            FortuneClient->>Client: Exibe lista de frases
+        end
+    end
