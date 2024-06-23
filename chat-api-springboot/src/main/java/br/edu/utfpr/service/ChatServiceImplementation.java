@@ -3,6 +3,7 @@ package br.edu.utfpr.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,8 @@ public class ChatServiceImplementation implements ChatService {
 		if (chat.isPresent()) {
 			return chat.get();
 		}
-		throw new ChatException("Chat not exist with id " + chatId);
+		throw new ChatException(
+				"Chat não encontrado. Por favor, verifique se o chat existe ou se você tem permissão para acessá-lo.");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -133,7 +135,7 @@ public class ChatServiceImplementation implements ChatService {
 			return chat;
 		}
 
-		throw new ChatException("you dont have access to delete this chat");
+		throw new ChatException("Apenas o dono do chat pode deletar o chat.");
 	}
 
 	@Override
@@ -162,16 +164,19 @@ public class ChatServiceImplementation implements ChatService {
 	}
 
 	@Override
-	public Chat addUserToGroup(Integer userId, Integer chatId) throws UserException, ChatException {
-
+	public Chat addUserToGroup(Integer userId, Integer chatId, Integer reqUserId) throws UserException, ChatException {
 		Chat chat = findChatById(chatId);
 		User user = userService.findUserById(userId);
 
-		chat.getUsers().add(user);
+		if (chat.getCreated_by().getId() != reqUserId) {
+			chat.getPendingUsers().add(user);
+		} else {
+			chat.getUsers().add(user);
+		}
 
-		Chat updatedChat = chatRepo.save(chat);
+		chatRepo.save(chat);
 
-		return updatedChat;
+		return chat;
 	}
 
 	@Override
@@ -191,13 +196,45 @@ public class ChatServiceImplementation implements ChatService {
 		Chat chat = findChatById(chatId);
 		User user = userService.findUserById(userId);
 
-		User reqUser = userService.findUserById(reqUserId);
+		if (chat.getCreated_by().getId().equals(reqUserId) || user.getId().equals(reqUserId)) {
+			chat.getUsers().removeIf(u -> u.getId().equals(userId));
+			return chatRepo.save(chat);
+		} else {
+			throw new ChatException("Apenas o dono do grupo ou o próprio usuário podem remover alguém do grupo.");
+		}
+	}
 
-		if (user.getId().equals(reqUser.getId())) {
-			chat.getUsers().remove(reqUser);
+	@Override
+	public List<Chat> getAllGroupChat() {
+		List<Chat> chats = chatRepo.findAll();
+		List<Chat> groupChats = new ArrayList<>();
+
+		chats.forEach(chat -> {
+			if (chat.getIs_group()) {
+				chat.getMessages().size();
+				chat.getUsers().size();
+				groupChats.add(chat);
+			}
+		});
+
+		return groupChats;
+	}
+
+	@Override
+	public Chat acceptUserToGroup(Integer userId, Integer chatId, Integer reqUserId)
+			throws UserException, ChatException {
+		Chat chat = findChatById(chatId);
+		User user = userService.findUserById(userId);
+
+		if (chat.getCreated_by().getId() == reqUserId) {
+			chat.getUsers().add(user);
+			chat.getPendingUsers().remove(user);
+			chatRepo.save(chat);
+		} else {
+			throw new ChatException("Apenas o dono do grupo pode aceitar usuários no grupo.");
 		}
 
-		return null;
+		return chat;
 	}
 
 }

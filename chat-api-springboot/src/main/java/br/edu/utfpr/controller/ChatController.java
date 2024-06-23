@@ -24,6 +24,7 @@ import br.edu.utfpr.modal.User;
 import br.edu.utfpr.request.GroupChatRequest;
 import br.edu.utfpr.request.RenameGroupRequest;
 import br.edu.utfpr.request.SingleChatRequest;
+import br.edu.utfpr.response.ApiResponse;
 import br.edu.utfpr.service.ChatService;
 import br.edu.utfpr.service.UserService;
 
@@ -36,9 +37,18 @@ public class ChatController {
 	@Autowired
 	private UserService userService;
 
+	@GetMapping("/all")
+	public ResponseEntity<List<ChatDto>> getAllGroupChatHandler() throws ChatException {
+		List<Chat> chats = chatService.getAllGroupChat();
+
+		List<ChatDto> chatDtos = ChatDtoMapper.toChatDtos(chats);
+
+		return new ResponseEntity<List<ChatDto>>(chatDtos, HttpStatus.OK);
+	}
+
 	@PostMapping("/single")
-	public ResponseEntity<ChatDto> creatChatHandler(@RequestBody SingleChatRequest singleChatRequest,
-			@RequestHeader("Authorization") String jwt) throws UserException {
+	public ResponseEntity<ChatDto> creatChatHandler(@RequestHeader("Authorization") String jwt,
+			@RequestBody SingleChatRequest singleChatRequest) throws UserException {
 		User reqUser = userService.findUserProfile(jwt);
 
 		Chat chat = chatService.createChat(reqUser.getId(), singleChatRequest.getUserId(), false);
@@ -85,10 +95,25 @@ public class ChatController {
 	}
 
 	@PutMapping("/{chatId}/add/{userId}")
-	public ResponseEntity<ChatDto> addUserToGroupHandler(@PathVariable Integer chatId, @PathVariable Integer userId)
+	public ResponseEntity<ChatDto> addUserToGroupHandler(@RequestHeader("Autorization") String jwt,
+			@PathVariable Integer chatId, @PathVariable Integer userId)
 			throws UserException, ChatException {
+		User reqUser = userService.findUserProfile(jwt);
 
-		Chat chat = chatService.addUserToGroup(userId, chatId);
+		Chat chat = chatService.addUserToGroup(userId, chatId, reqUser.getId());
+
+		ChatDto chatDto = ChatDtoMapper.toChatDto(chat);
+
+		return new ResponseEntity<ChatDto>(chatDto, HttpStatus.OK);
+	}
+
+	@PutMapping("/{chatId}/accept/{userId}")
+	public ResponseEntity<ChatDto> acceptUserToGroupHandler(@RequestHeader("Autorization") String jwt,
+			@PathVariable Integer chatId, @PathVariable Integer userId)
+			throws UserException, ChatException {
+		User reqUser = userService.findUserProfile(jwt);
+
+		Chat chat = chatService.acceptUserToGroup(userId, chatId, reqUser.getId());
 
 		ChatDto chatDto = ChatDtoMapper.toChatDto(chat);
 
@@ -110,16 +135,15 @@ public class ChatController {
 	}
 
 	@PutMapping("/{chatId}/remove/{userId}")
-	public ResponseEntity<ChatDto> removeFromGroupHandler(@RequestHeader("Authorization") String jwt,
+	public ResponseEntity<ApiResponse> removeFromGroupHandler(@RequestHeader("Authorization") String jwt,
 			@PathVariable Integer chatId, @PathVariable Integer userId) throws UserException, ChatException {
-
 		User reqUser = userService.findUserProfile(jwt);
 
-		Chat chat = chatService.removeFromGroup(chatId, userId, reqUser.getId());
+		chatService.removeFromGroup(chatId, userId, reqUser.getId());
 
-		ChatDto chatDto = ChatDtoMapper.toChatDto(chat);
+		ApiResponse res = new ApiResponse("pessoa removida com sucesso", true);
 
-		return new ResponseEntity<ChatDto>(chatDto, HttpStatus.OK);
+		return new ResponseEntity<ApiResponse>(res, HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping("/delete/{chatId}/{userId}")

@@ -42,6 +42,10 @@ public class Chat {
 	@JoinTable(name = "chat_users", joinColumns = @JoinColumn(name = "chat_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<User> users = new HashSet<>();
 
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "pending_users", joinColumns = @JoinColumn(name = "chat_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private Set<User> pendingUsers = new HashSet<>();
+
 	@OneToMany(fetch = FetchType.EAGER)
 	private List<Message> messages = new ArrayList<>();
 }

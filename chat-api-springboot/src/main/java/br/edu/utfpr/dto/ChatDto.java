@@ -23,5 +23,7 @@ public class ChatDto {
 
 	private Set<UserDto> users = new HashSet<>();
 
+	private Set<UserDto> pendingUsers = new HashSet<>();
+
 	private List<MessageDto> messages = new ArrayList<>();
 }

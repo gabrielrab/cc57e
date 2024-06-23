@@ -13,16 +13,19 @@ public interface ChatService {
 
 	Chat findChatById(Integer chatId) throws ChatException;
 
+	List<Chat> getAllGroupChat() throws ChatException;
+
 	List<Chat> findAllChatByUserId(Integer userId) throws UserException;
 
 	Chat createGroup(GroupChatRequest req, Integer reqUerId) throws UserException;
 
-	Chat addUserToGroup(Integer userId, Integer chatId) throws UserException, ChatException;
+	Chat addUserToGroup(Integer userId, Integer chatId, Integer reqUserId) throws UserException, ChatException;
+
+	Chat acceptUserToGroup(Integer userId, Integer chatId, Integer reqUserId) throws UserException, ChatException;
 
 	Chat renameGroup(Integer chatId, String groupName, Integer reqUserId) throws ChatException, UserException;
 
 	Chat removeFromGroup(Integer chatId, Integer userId, Integer reqUser) throws UserException, ChatException;
 
 	Chat deleteChat(Integer chatId, Integer userId) throws ChatException, UserException;
-
 }
