@@ -230,10 +230,10 @@ const HomePage = () => {
 
   return (
     <div className="relative">
-      <div className="py-14 bg-[#00a884] w-full"></div>
+      <div className="py-14 bg-amber-400 w-full"></div>
 
-      <div className="absolute w-[97vw] h-[94vh] bg-[#f0f2f5] top-6 left-6 flex">
-        <div className="w-[30%] bg-[#e8e9ec] h-full">
+      <div className="absolute w-[97vw] h-[94vh] bg-[#f5f5f5] top-6 left-6 flex rounded-lg">
+        <div className="w-[30%] bg-white h-full rounded-lg">
           {isCreateGroup && (
             <div className="h-full">
               <CreateGroup

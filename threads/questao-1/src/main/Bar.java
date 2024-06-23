@@ -6,9 +6,9 @@ public class Bar {
 
     // Parâmetros
     public static final int NUM_CLIENTS = 3; // a quantidade de clientes presentes no estabelecimento
-    public static final int NUM_WAITER = 2; // a quantidade de garçons que estão trabalhando
+    public static final int NUM_WAITER = 1; // a quantidade de garçons que estão trabalhando
     public static final int WAITER_CAPACITY = 2; // a capacidade de atendimento dos garçons
-    public static final int NUM_ROUNDS = 2; // o número de rounds que serão liberadas no bar
+    public static final int NUM_ROUNDS = 1; // o número de rodadas que serão liberadas no bar
 
     // Variáveis
     public static final Semaphore waitersAvailable = new Semaphore(NUM_WAITER);

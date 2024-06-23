@@ -55,25 +55,25 @@ const Login = () => {
   return (
     <div>
       <div className="flex justify-center min-h-screen items-center">
-      <div className="w-[30%] p-10  shadow-md bg-white">
+      <div className="w-[30%] p-10  shadow-lg bg-white rounded-lg">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <p className="mb-2">Email</p>
+            <p className="mb-2 text-zinc-800">Email</p>
             <input
-              className="py-2 px-3 outline outline-green-600 w-full rounded-md border-1"
+              className="py-2 px-3 outline outline-2 outline-amber-400 w-full rounded-md border-1"
               type="text"
-              placeholder="Enter your Email"
+              placeholder="Digite seu Email"
               name="email"
               onChange={(e) => handleChange(e)}
               value={inputData.email}
             />
           </div>
           <div>
-            <p className="mb-2">Password</p>
+            <p className="mb-2 text-zinc-800">Senha</p>
             <input
-              className="py-2 px-2 outline outline-green-600 w-full rounded-md border-1"
-              type="text"
-              placeholder="Enter your Password"
+              className="py-2 px-2 outline outline-2 outline-amber-400 w-full rounded-md border-1"
+              type="password"
+              placeholder="Digite sua Password"
               name="password"
               onChange={(e) => handleChange(e)}
               value={inputData.password}
@@ -81,21 +81,21 @@ const Login = () => {
           </div>
           <div>
             <input
-              className="py-[0.7rem] px-3 w-full rounded-md bg-green-600 text-white mt-3"
+              className="py-[0.7rem] px-3 w-full rounded-md bg-amber-400 text-zinc-800 font-bold text-white mt-3"
               type="Submit"
-              placeholder="Enter your Password"
-              value={"Login"}
+              placeholder="Digite sua Password"
+              value={"Entrar"}
               readOnly
             />
           </div>
         </form>
-        <div className="flex space-x-3 item-center mt-5">
-          <p className="">Create New Account</p>
+        <div className="flex space-x-1 item-center mt-5">
+          <p className="">É novo na plataforma?</p>
           <p
             onClick={() => navigate("/Signup")}
             className="text-blue-500 hover:text-blue-800 cursor-pointer"
           >
-            signup
+            clique aqui
           </p>
         </div>
       </div>
