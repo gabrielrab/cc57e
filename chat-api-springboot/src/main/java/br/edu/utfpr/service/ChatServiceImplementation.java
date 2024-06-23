@@ -2,16 +2,10 @@ package br.edu.utfpr.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.edu.utfpr.exception.ChatException;
 import br.edu.utfpr.exception.UserException;
