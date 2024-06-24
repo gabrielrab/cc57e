@@ -9,4 +9,5 @@ public class GroupChatRequest {
 	private List<Integer> userIds;
 	private String chat_name;
 	private String chat_image;
+	private int leave_strategy = 0;
 }

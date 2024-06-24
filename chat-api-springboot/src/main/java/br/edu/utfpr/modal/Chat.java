@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,6 +36,9 @@ public class Chat {
 	private Set<User> admins = new HashSet<>();
 
 	private Boolean is_group;
+
+	@Enumerated(EnumType.ORDINAL)
+	private LeaveStrategy leaveStrategy = LeaveStrategy.DELETE_GROUP;
 
 	@ManyToOne
 	private User created_by;
