@@ -22,6 +22,7 @@ import "./Home.css";
 import { useRef } from "react";
 import Picker from "emoji-picker-react";
 import Profile from "./Profile";
+import EditGroup from "./EditGroup";
 import { BsArrowLeft } from "react-icons/bs";
 import SimpleSnackbar from "./SimpleSnackbar";
 import DropDown from "../DropDown/DropDown";
@@ -45,6 +46,7 @@ const HomePage = () => {
   const messageRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
   const [isProfile, setIsProfile] = useState(false);
+  const [isEditGroup, setIsEditGroup] = useState(false);
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const [stompClient, setStompClient] = useState(null);
@@ -215,15 +217,14 @@ const HomePage = () => {
 
   const handleBack = () => setIsProfile(false);
 
+  const handleBackEdit = () => setIsEditGroup(false);
+
   useEffect(() => {
     setOpen(true);
     connect();
   }, []);
 
-  const handleNavigate = () => {
-    navigate("/status");
-  };
-
+  
   const handleCreateGroup = () => {
     setIsCreateGroup(true);
   };
@@ -372,12 +373,12 @@ const HomePage = () => {
           </div>
         )}
 
-        {currentChat && (
+        {currentChat &&(
           <div className="w-[70%] bg-blue-100 relative">
             {/* header part */}
             <div className="header absolute top-0 w-full bg-[#f0f2f5]">
               <div className=" flex justify-between ">
-                <div className="py-3 space-x-4 flex items-center px-3 bg">
+                <div className="py-3 space-x-4 flex items-center px-3 bg" onClick={() => setIsEditGroup(true)}>
                   <img
                     className="w-10 h-10 rounded-full"
                     src={currentChat?.is_group? (currentChat?.chat_image || "https://cdn.pixabay.com/photo/2016/04/15/18/05/computer-1331579__340.png"):
@@ -451,6 +452,12 @@ const HomePage = () => {
                 <BsMicFill />
               </div>
             </div>
+          </div>
+        )}
+
+        {isEditGroup &&(
+          <div className="absolute right-0 top-0 bottom-0 bg-white">
+            <EditGroup handleBack={handleBackEdit}/>
           </div>
         )}
       </div>
