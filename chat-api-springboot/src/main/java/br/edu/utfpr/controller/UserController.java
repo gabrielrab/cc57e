@@ -28,6 +28,16 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@GetMapping("/all")
+	public ResponseEntity<HashSet<UserDto>> getAllUsersHandler() {
+		List<User> users = userService.getAllUsers();
+		HashSet<User> set = new HashSet<>(users);
+
+		HashSet<UserDto> userDtos = UserDtoMapper.toUserDtos(set);
+
+		return new ResponseEntity<HashSet<UserDto>>(userDtos, HttpStatus.ACCEPTED);
+	}
+
 	@PutMapping("/update/{userId}")
 	public ResponseEntity<UserDto> updateUserHandler(@RequestBody UpdateUserRequest req, @PathVariable Integer userId)
 			throws UserException {

@@ -66,4 +66,9 @@ public class UserServiceImplementation implements UserService {
 	public List<User> searchUser(String query) {
 		return userRepo.searchUsers(query);
 	}
+
+	@Override
+	public List<User> getAllUsers() {
+		return userRepo.findAll();
+	}
 }

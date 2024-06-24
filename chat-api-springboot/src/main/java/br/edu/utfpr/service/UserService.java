@@ -15,4 +15,6 @@ public interface UserService {
 	User findUserById(Integer userId) throws UserException;
 
 	List<User> searchUser(String query);
+
+	List<User> getAllUsers();
 }
