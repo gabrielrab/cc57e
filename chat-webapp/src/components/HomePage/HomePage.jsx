@@ -230,10 +230,11 @@ const HomePage = () => {
 
   return (
     <div className="relative">
-      <div className="py-14 bg-amber-400 w-full"></div>
+      <div className="py-12 bg-amber-400 w-full"></div>
+      <div className="py-3 bg-black w-full"></div>
 
-      <div className="absolute w-[97vw] h-[94vh] bg-[#f5f5f5] top-6 left-6 flex rounded-lg">
-        <div className="w-[30%] bg-white h-full rounded-lg">
+      <div className="absolute w-[97vw] h-[94vh] bg-white top-6 left-6 flex rounded-lg shadow-md border border-[#e5e7eb]">
+        <div className="w-[30%] bg-white h-full rounded-l-lg border-r border-[#e5e7eb]">
           {isCreateGroup && (
             <div className="h-full">
               <CreateGroup
@@ -267,27 +268,21 @@ const HomePage = () => {
                     <p>{auth.reqUser?.full_name}</p>
                   </div>
                   <div className="space-x-3 text-2xl flex">
-                    <TbCircleDashed onClick={handleNavigate} />
-                    <BiCommentDetail />
                     <DropDown handleCreateGroup={handleCreateGroup} />
                   </div>
                 </div>
-                {/* input */}
                 <div className="relative flex justify-center items-center bg-white py-4 px-3">
                   <input
                     onChange={(e) => {
                       setQuerys(e.target.value);
                       handleSearch(e.target.value);
                     }}
-                    className="border-none outline-none py-2 bg-slate-200 rounded-md w-[93%] pl-9"
+                    className="border-none outline-none py-2 bg-gray-100 rounded-md w-full pl-9"
                     type="text"
-                    placeholder="Search or start new Chat"
+                    placeholder="Procure ou comece uma nova conversa"
                     value={querys}
                   />
-                  <AiOutlineSearch className="absolute top-7 left-5" />
-                  <div>
-                    <BsFilter className="ml-4 text-3xl" />
-                  </div>
+                  <AiOutlineSearch className="absolute top-7 left-6" />
                 </div>
               </div>
               {/* all user */}
@@ -363,15 +358,15 @@ const HomePage = () => {
 
         {!currentChat && (
           <div className="w-[70%] flex flex-col items-center justify-center">
-            <div className="max-w-[70%] text-center">
+            <div className="max-w-[70%] text-center flex flex-col items-center justify-center">
               <img
-                src="https://res.cloudinary.com/zarmariya/image/upload/v1662264838/whatsapp_multi_device_support_update_image_1636207150180-removebg-preview_jgyy3t.png"
+                src="https://i.ibb.co/XWwBS4L/removal-ai-93923e6b-9431-43a3-8c13-17095cfa42ef-whatsapp-image-2024-06-23-at-18-54-23.png"
                 alt=""
               />
-              <h1 className="text-4xl text-gray-600">WhatsApp Web</h1>
+              <h1 className="text-4xl text-amber-400 drop-shadow-[0_1px_1px_rgba(5,5,5,5)]">Whats<strong className="text-4xl text-black">UT</strong></h1>
               <p className=" my-9">
-                send and reveive message without keeping your phone online. Use
-                WhatsApp on Up to 4 Linked devices and 1 phone at the same time.
+              WhatsUT é uma plataforma de chat online que facilita a comunicação instantânea 
+              entre usuários de forma prática e intuitiva.
               </p>
             </div>
           </div>
@@ -401,7 +396,6 @@ const HomePage = () => {
                   </p>
                 </div>
                 <div className="py-3 space-x-4 flex items-center px-3 bg">
-                  <AiOutlineSearch />
                   <BsThreeDotsVertical />
                 </div>
               </div>
@@ -413,7 +407,7 @@ const HomePage = () => {
               onClick={handleEmojiBoxClose}
               className="px-10   h-[85vh] overflow-y-scroll"
             >
-              <div className=" space-y-1 flex flex-col justify-center border mt-20 py-2">
+              <div className=" space-y-1 flex flex-col justify-center mt-20 py-2">
                 {messages.length > 0 &&
                   messages?.map((item, index) => (
                     <Message
@@ -445,7 +439,7 @@ const HomePage = () => {
                 <input
                   onChange={(e) => setContent(e.target.value)}
                   className="py-2 outline-none border-none bg-white pl-4 rounded-md w-[85%]"
-                  placeholder="Type message"
+                  placeholder="Mensagem..."
                   value={content}
                   onKeyPress={(e) => {
                     if (e.key === "Enter") {
@@ -461,7 +455,7 @@ const HomePage = () => {
         )}
       </div>
       <SimpleSnackbar
-        message={`Welcome ${auth.reqUser?.full_name}`}
+        message={`Bem vindo ${auth.reqUser?.full_name}!`}
         open={open}
         handleClose={handleClose}
         type={"success"}

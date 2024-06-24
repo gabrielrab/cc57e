@@ -20,8 +20,8 @@ const DropDown=({handleCreateGroup})=> {
   };
   const handleClose = () => {
     setAnchorEl(null);
-    
   };
+
 const handleLogout=()=>{
     localStorage.removeItem("token");
     dispatch(setFieldToNull(REGISTER));
@@ -46,10 +46,9 @@ const handleLogout=()=>{
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleCreateGroup}>Create Group</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        <MenuItem onClick={handleClose}>Perfil</MenuItem>
+        <MenuItem onClick={handleCreateGroup}>Criar Grupo</MenuItem>
+        <MenuItem onClick={handleLogout}>Sair</MenuItem>
         
       </Menu>
     </div>

@@ -54,7 +54,16 @@ const Login = () => {
 
   return (
     <div>
-      <div className="flex justify-center min-h-screen items-center">
+      <div className="flex justify-center min-h-screen items-center flex-col">
+      <div className="flex justify-center items-center">
+        <img
+          src="https://i.ibb.co/XWwBS4L/removal-ai-93923e6b-9431-43a3-8c13-17095cfa42ef-whatsapp-image-2024-06-23-at-18-54-23.png"
+          alt=""
+          className="w-[20%]"
+        />
+        <h1 className="text-4xl text-amber-400 drop-shadow-[0_1px_1px_rgba(5,5,5,5)]">Whats<strong className="text-4xl text-black">UT</strong></h1>
+      </div>
+      
       <div className="w-[30%] p-10  shadow-lg bg-white rounded-lg">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>

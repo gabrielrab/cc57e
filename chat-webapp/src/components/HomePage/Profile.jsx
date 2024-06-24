@@ -23,12 +23,12 @@ const Profile = ({ handleBack }) => {
   const handleClose = () => setOpen(false);
   return (
     <div className=" w-full h-full">
-      <div className=" flex items-center space-x-10 bg-[#008069] text-white pt-16 px-10 pb-5">
+      <div className=" flex items-center space-x-3 bg-amber-400 text-white pt-6 px-10 pb-5 border-b-4 border-black">
         <BsArrowLeft
           onClick={handleBack}
-          className="cursor-pointer text-2xl font-bold"
+          className="cursor-pointer text-2xl font-bold mt-1"
         />
-        <p className="text-xl font-semibold">Profile</p>
+        <p className="text-xl font-semibold">Perfil</p>
       </div>
 
       <div className="flex flex-col justify-center items-center my-12">
@@ -78,7 +78,7 @@ const Profile = ({ handleBack }) => {
       </div>
 
       <div className="bg-white px-3 ">
-        <p className="py-3">Your Name</p>
+        <p className="py-3">Seu Nome</p>
         {!flag && (
           <div className="w-full flex justify-between items-center">
             <p className="py-3">{username || auth.reqUser?.full_name}</p>
@@ -96,9 +96,9 @@ const Profile = ({ handleBack }) => {
           <div className="w-full flex justify-between items-center py-2">
             <input
               onChange={(e) => setUsername(e.target.value)}
-              className="w-[80%] outline-none border-b-2 border-blue-700 px-2  py-2"
+              className="w-full outline-none border-b-2 border-zinc-700 px-2  py-2"
               type="text"
-              placeholder="Enter you name"
+              placeholder="Digite seu nome"
               value={username}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
@@ -109,7 +109,7 @@ const Profile = ({ handleBack }) => {
             />
             <BsCheck2
               onClick={() => {
-                setMessage("name updated successfully")
+                setMessage("Nome atualizado com sucesso!")
                 dispatch(updateUser(data));
                 setFlag(false);
                 setOpen(true);
@@ -122,8 +122,7 @@ const Profile = ({ handleBack }) => {
 
       <div className="px-3 my-5">
         <p className="py-10">
-          this is not your username, this name will be visible to your whatapp
-          contects.
+          Este não é o seu nome de usuário. Esse nome será exibido para seus contatos do WhatsUT.
         </p>
       </div>
 
