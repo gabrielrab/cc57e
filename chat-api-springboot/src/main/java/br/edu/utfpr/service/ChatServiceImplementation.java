@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import br.edu.utfpr.exception.ChatException;
 import br.edu.utfpr.exception.UserException;
 import br.edu.utfpr.modal.Chat;
+import br.edu.utfpr.modal.LeaveStrategy;
 import br.edu.utfpr.modal.User;
 import br.edu.utfpr.repository.ChatRepository;
 import br.edu.utfpr.request.GroupChatRequest;
@@ -130,12 +131,27 @@ public class ChatServiceImplementation implements ChatService {
 		Chat chat = findChatById(chatId);
 
 		if ((chat.getCreated_by().getId().equals(user.getId())) && !chat.getIs_group()) {
-			chatRepo.deleteById(chat.getId());
+			if (chat.getLeaveStrategy().equals(LeaveStrategy.DELETE_GROUP) || chat.getLeaveStrategy() == null) {
+				chatRepo.deleteById(chat.getId());
+				return chat;
+			} else {
+				chat.getUsers().removeIf(u -> u.getId().equals(user.getId()));
+				chat.getAdmins().removeIf(u -> u.getId().equals(user.getId()));
 
-			return chat;
+				User newAdmin = chat.getUsers().stream()
+						.filter(u -> !u.getId().equals(user.getId()))
+						.findAny()
+						.orElse(null);
+
+				if (newAdmin != null) {
+					chat.getAdmins().add(newAdmin);
+				}
+				chatRepo.save(chat);
+				return chat;
+			}
 		}
 
-		throw new ChatException("Apenas o dono do chat pode deletar o chat.");
+		throw new ChatException("Apenas o dono do grupo pode deletar o grupo.");
 	}
 
 	@Override
@@ -181,7 +197,6 @@ public class ChatServiceImplementation implements ChatService {
 
 	@Override
 	public Chat renameGroup(Integer chatId, String groupName, Integer reqUserId) throws ChatException, UserException {
-
 		Chat chat = findChatById(chatId);
 		User user = userService.findUserById(reqUserId);
 
@@ -228,7 +243,7 @@ public class ChatServiceImplementation implements ChatService {
 
 		if (chat.getCreated_by().getId() == reqUserId) {
 			chat.getUsers().add(user);
-			chat.getPendingUsers().remove(user);
+			chat.getPendingUsers().removeIf(u -> u.getId().equals(userId));
 			chatRepo.save(chat);
 		} else {
 			throw new ChatException("Apenas o dono do grupo pode aceitar usuários no grupo.");
