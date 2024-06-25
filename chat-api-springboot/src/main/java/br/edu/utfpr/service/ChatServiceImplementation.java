@@ -173,6 +173,7 @@ public class ChatServiceImplementation implements ChatService {
 		chat.setChat_name(req.getChat_name());
 		chat.setChat_image(req.getChat_image());
 		chat.setIs_group(true);
+		chat.setLeaveStrategy(LeaveStrategy.values()[req.getLeave_strategy()]);
 		chat.getAdmins().add(reqUser);
 
 		return chatRepo.save(chat);
