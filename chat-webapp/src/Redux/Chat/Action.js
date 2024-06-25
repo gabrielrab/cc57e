@@ -65,6 +65,9 @@ export const PutRemoveMember = (token , chatId , userId) => async(dispatch) => {
          "Authorization":`Bearer ${token}`
        }
      });
+     console.log("token ----- ",token);
+     console.log("chatid ----- ",chatId);
+     console.log("userid ----- ",userId);
      const response = await res.json();
      console.log("Put remove member ----- ",response)
   dispatch({type:PUT_REMOVE_MEMBER, payload:response})

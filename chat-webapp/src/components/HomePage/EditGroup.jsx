@@ -6,13 +6,12 @@ import { currentUser, updateUser } from "../../Redux/Auth/Action";
 import SimpleSnackbar from "./SimpleSnackbar";
 import { PutRemoveMember } from "../../Redux/Chat/Action";
 
-const EditGroup = ({ handleBack , chat }) => {
+const EditGroup = ({ handleBack , chat, user }) => {
   const { auth } = useSelector((store) => store);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
-  const [groupName, setGroupName] = useState(chat.chat_name);
-  const [groupImage, setgroupImage] = useState(chat.chat_image);
-  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [groupName] = useState(chat.chat_name);
+  const [groupImage] = useState(chat.chat_image);
 
   const handleEditGroup = () => {
     
@@ -20,7 +19,8 @@ const EditGroup = ({ handleBack , chat }) => {
   };
 
   const handleRemoveMember = (userId) => {
-    console.log(userId)
+    dispatch(PutRemoveMember(token, chat.id, userId));
+    handleBack(false);
   };
 
 
@@ -45,7 +45,6 @@ const EditGroup = ({ handleBack , chat }) => {
             }
             alt=""
           />
-          {isImageUploading}
         </label>
 
       </div>
@@ -62,14 +61,19 @@ const EditGroup = ({ handleBack , chat }) => {
             {chat.users?.map((item, index) => (
               <div className="w-full p-2 flex justify-between items-center border-b border-zinc-800">
                   {item.full_name}
-                  <div className="cursor-pointer" onClick={() => handleRemoveMember(item.id)}>
-                    <BsTrash className="fill-red-950"/>
-                  </div>
+                  {item}
+                  {item.id}
+                  {item.full_name != user.full_name && user.full_name == chat.admins[0].full_name && (
+                    <div className="cursor-pointer" onClick={() => handleRemoveMember(item.id)}>
+                    <BsTrash />
+                    </div>
+                  )}
+                  
               </div>
             ))}
           </div>
       </div>
-
+{user.full_name == chat.created_by.full_name &&(
       <div className="w-full flex flex-col justify-between items-center py-3 px-5">
         <p className="w-full p-3 border-b-2 border-zinc-800 text-left font-bold">Pedidos para entrar</p>
         <div className="w-full h-30 overflow-auto">
@@ -89,6 +93,7 @@ const EditGroup = ({ handleBack , chat }) => {
             ))}
           </div>
       </div>
+      )}
 
       <SimpleSnackbar
         type={"success"}

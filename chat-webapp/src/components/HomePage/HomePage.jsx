@@ -458,7 +458,7 @@ const HomePage = () => {
 
         {isEditGroup &&(
           <div className="absolute right-0 top-0 bottom-0 bg-white w-[30%]">
-            <EditGroup handleBack={handleBackEdit}  chat = {currentChat}/>
+            <EditGroup handleBack={handleBackEdit}  chat = {currentChat} user={auth.reqUser}/>
           </div>
         )}
       </div>
