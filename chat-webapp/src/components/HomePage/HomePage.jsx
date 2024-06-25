@@ -230,6 +230,11 @@ const HomePage = () => {
     setIsCreateGroup(true);
   };
 
+  const exitGroupHandle = () => {
+    chat.chats = chat.chats.filter(chats => chat.id !== currentChat.id);
+    setCurrentChat(null);
+  };
+
   return (
     <div className="relative">
       <div className="py-12 bg-amber-400 w-full"></div>
@@ -538,7 +543,7 @@ const HomePage = () => {
 
         {isEditGroup &&(
           <div className="absolute right-0 top-0 bottom-0 bg-white w-[30%]">
-            <EditGroup handleBack={handleBackEdit}  chat = {currentChat} user={auth.reqUser}/>
+            <EditGroup handleBack={handleBackEdit}  chat = {currentChat} user={auth.reqUser} exitGroupHandle={exitGroupHandle}/>
           </div>
         )}
       </div>

@@ -6,7 +6,7 @@ import { currentUser, updateUser } from "../../Redux/Auth/Action";
 import SimpleSnackbar from "./SimpleSnackbar";
 import { PutRemoveMember } from "../../Redux/Chat/Action";
 
-const EditGroup = ({ handleBack, chat, user }) => {
+const EditGroup = ({ handleBack, chat, user , exitGroupHandle }) => {
   const { auth } = useSelector((store) => store);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
@@ -16,6 +16,13 @@ const EditGroup = ({ handleBack, chat, user }) => {
   const handleRemoveMember = (userId) => {
     dispatch(PutRemoveMember(token, chat.id, userId));
     chat.users = chat.users.filter(users => users.id !== userId);
+    exitGroupHandle();
+    handleBack(false);
+  };
+
+  const exitGroup = () => {
+    dispatch(PutRemoveMember(token, chat.id, auth.reqUser?.id));
+    chat.users = chat.users.filter(users => users.id !== auth.reqUser?.id);
     handleBack(false);
   };
 
@@ -94,7 +101,7 @@ const EditGroup = ({ handleBack, chat, user }) => {
       )}
 
       <div className="flex justify-center">
-        <p className=" cursor-pointer p-2 underline text-red-700 font-bold">
+        <p className=" cursor-pointer p-2 underline text-red-700 font-bold" onClick={()=>exitGroup()}>
           Sair do grupo X
         </p>
 
