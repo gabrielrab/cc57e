@@ -7,6 +7,7 @@ import { messageReducer } from "./Message/Reducer";
 const rootReducer = combineReducers({
  auth: authReducer,
  chat: chatReducer,
+ chatPubli: chatReducer,
  message:messageReducer,
 })
 

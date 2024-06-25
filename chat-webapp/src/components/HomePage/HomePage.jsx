@@ -14,7 +14,7 @@ import UserChat from "./UserChat";
 import Message from "./Message";
 import { useDispatch, useSelector } from "react-redux";
 import { currentUser, searchUser } from "../../Redux/Auth/Action";
-import { createSingleChat, getAllChat } from "../../Redux/Chat/Action";
+import { createSingleChat, getAllChat, getAllPubliChat } from "../../Redux/Chat/Action";
 import { createNewMessage, getAllMessage } from "../../Redux/Message/Action";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
@@ -34,7 +34,7 @@ let soket, selectedChatCompare;
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const { auth, chat, message } = useSelector((store) => store);
+  const { auth, chat, chatPubli, message } = useSelector((store) => store);
   const token = localStorage.getItem("token");
   const [querys, setQuerys] = useState("");
   const [content, setContent] = useState("");
@@ -49,6 +49,8 @@ const HomePage = () => {
   const [isProfile, setIsProfile] = useState(false);
   const [isEditGroup, setIsEditGroup] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openRemove, setOpenRemove] = useState(false);
+  const [openExit, setOpenExit] = useState(false);
   const handleClose = () => setOpen(false);
   const [stompClient, setStompClient] = useState(null);
   const [isCreateGroup, setIsCreateGroup] = useState(false);
@@ -124,6 +126,12 @@ const HomePage = () => {
   useEffect(() => {
     if (token) dispatch(getAllChat(token));
   }, [token, chat.singleChat,chat.createdGroup]);
+
+  useEffect(() => {
+    console.log("CHATS PUBLI ANTES",chatPubli)
+    if (token) dispatch(getAllPubliChat(token));
+    console.log("CHATS PUBLI",chatPubli)
+  }, [token]);
 
   //create new message
   const handleCreateNewMessage = () => {
@@ -220,6 +228,11 @@ const HomePage = () => {
 
   const handleBackEdit = () => setIsEditGroup(false);
 
+  const handleBackRemove = () => { 
+    setOpenRemove(true);
+    setIsEditGroup(false)
+  };
+
   useEffect(() => {
     setOpen(true);
     connect();
@@ -231,8 +244,10 @@ const HomePage = () => {
   };
 
   const exitGroupHandle = () => {
-    chat.chats = chat.chats.filter(chats => chat.id !== currentChat.id);
+    setIsEditGroup(false);
+    chat.chats = chat.chats.filter(chat => chat.id !== currentChat.id);
     setCurrentChat(null);
+    setOpenExit(true);
   };
 
   return (
@@ -325,7 +340,7 @@ const HomePage = () => {
                         createNewChat(item?.id);
                         setQuerys("");
                       }}
-                      key={item?.id}
+                      key={index}
                     >
                       <hr />
                       <UserChat
@@ -389,9 +404,9 @@ const HomePage = () => {
 
             {!Tab1 &&(
               <div className="bg-white overflow-y-scroll h-[440px]">
-                {!chat.chats?.error &&
-                  chat?.chats?.map((item, index) => (
-                    <div onClick={() => handleCurrentChat(item)} key={item.id}>
+                {!chatPubli.chatPubli?.error &&
+                  chatPubli.chatPubli?.map((item, index) => (
+                    <div  key={index}>
                       <hr />
                       {item.is_group ? (
                         <UserChat
@@ -543,7 +558,7 @@ const HomePage = () => {
 
         {isEditGroup &&(
           <div className="absolute right-0 top-0 bottom-0 bg-white w-[30%]">
-            <EditGroup handleBack={handleBackEdit}  chat = {currentChat} user={auth.reqUser} exitGroupHandle={exitGroupHandle}/>
+            <EditGroup handleBack={handleBackEdit}  chat = {currentChat} user={auth.reqUser} exitGroupHandle={exitGroupHandle} handleBackRemove={handleBackRemove}/>
           </div>
         )}
       </div>
@@ -551,6 +566,20 @@ const HomePage = () => {
         message={`Bem vindo ${auth.reqUser?.full_name}!`}
         open={open}
         handleClose={handleClose}
+        type={"success"}
+      />
+
+      <SimpleSnackbar
+        message={`Usuário removido com sucesso!`}
+        open={openRemove}
+        handleClose={()=>setOpenRemove(!openRemove)}
+        type={"success"}
+      />
+
+      <SimpleSnackbar
+        message={`Você saiu do grupo!`}
+        open={openExit}
+        handleClose={()=>setOpenExit(!openExit)}
         type={"success"}
       />
     </div>

@@ -1,5 +1,5 @@
 import { BASE_URL } from "../../Config/Api";
-import { CREATE_GROUP_CHAT, CREATE_SINGLE_CHAT, GET_ALL_CHAT, PUT_REMOVE_MEMBER } from "./ActionType";
+import { CREATE_GROUP_CHAT, CREATE_SINGLE_CHAT, GET_ALL_CHAT, PUT_REMOVE_MEMBER , GET_ALL_PUBLI_CHAT } from "./ActionType";
 
 export const createSingleChat = (data) => async(dispatch) => {
   try {
@@ -56,6 +56,19 @@ export const getAllChat = (token) => async(dispatch) => {
     console.log("get chats ----- ",chats)
  dispatch({type:GET_ALL_CHAT, payload:chats})
 }
+
+export const getAllPubliChat = (token) => async(dispatch) => {
+  const res = await fetch(`${BASE_URL}/chats/all`, {
+       method:"GET",
+       headers: {
+         "Content-Type": "application/json",
+         "Authorization":`Bearer ${token}`
+       }
+     });
+     const chatPubli = await res.json();
+     console.log("get chats PUBLI ----- ",chatPubli)
+  dispatch({type:GET_ALL_PUBLI_CHAT, payload:chatPubli})
+ }
 
 export const PutRemoveMember = (token , chatId , userId) => async(dispatch) => {
   const res = await fetch(`${BASE_URL}/chats/${chatId}/remove/${userId}`, {

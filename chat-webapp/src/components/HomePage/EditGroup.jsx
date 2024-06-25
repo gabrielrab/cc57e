@@ -6,7 +6,7 @@ import { currentUser, updateUser } from "../../Redux/Auth/Action";
 import SimpleSnackbar from "./SimpleSnackbar";
 import { PutRemoveMember } from "../../Redux/Chat/Action";
 
-const EditGroup = ({ handleBack, chat, user , exitGroupHandle }) => {
+const EditGroup = ({ handleBack, chat, user , exitGroupHandle, handleBackRemove }) => {
   const { auth } = useSelector((store) => store);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
@@ -16,14 +16,13 @@ const EditGroup = ({ handleBack, chat, user , exitGroupHandle }) => {
   const handleRemoveMember = (userId) => {
     dispatch(PutRemoveMember(token, chat.id, userId));
     chat.users = chat.users.filter(users => users.id !== userId);
-    exitGroupHandle();
-    handleBack(false);
+    handleBackRemove();
   };
 
   const exitGroup = () => {
     dispatch(PutRemoveMember(token, chat.id, auth.reqUser?.id));
     chat.users = chat.users.filter(users => users.id !== auth.reqUser?.id);
-    handleBack(false);
+    exitGroupHandle();
   };
 
   return (
