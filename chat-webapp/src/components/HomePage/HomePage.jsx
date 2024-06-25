@@ -45,6 +45,7 @@ const HomePage = () => {
   const [notifications, setNotifications] = useState([]);
   const messageRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
+  const [Tab1, setTab] = useState(true);
   const [isProfile, setIsProfile] = useState(false);
   const [isEditGroup, setIsEditGroup] = useState(false);
   const [open, setOpen] = useState(false);
@@ -286,9 +287,32 @@ const HomePage = () => {
                   <AiOutlineSearch className="absolute top-7 left-6" />
                 </div>
               </div>
-              {/* all user */}
+              
+              {Tab1 && (
+              <div className="flex justify-evenly p-4">
+                <div className="font-bold p-2 border-zinc-800 border-b-2 rounded-sm" onClick={() => setTab(true)}>
+                    Meus Chats
+                </div>
+                <div className="p-2" onClick={() => setTab(false)}>
+                    Chats Publicos
+                </div>
+              </div>
+              )}
+              {!Tab1 && (
+              <div className="flex justify-evenly p-4" onClick={() => setTab(true)}>
+                <div className="p-2">
+                    Meus Chats
+                </div>
+                <div className="font-bold p-2 border-zinc-800 border-b-2 rounded-sm" onClick={() => setTab(false)}>
+                    Chats Publicos
+                </div>
+              </div>
+              )}
 
-              <div className="bg-white overflow-y-scroll h-[76.8vh]">
+           
+              {/* all user */}
+              {Tab1 &&(
+              <div className="bg-white overflow-y-scroll h-[440px]">
                 {querys &&
                   auth.searchUser?.map((item, index) => (
                     <div
@@ -301,6 +325,7 @@ const HomePage = () => {
                       <hr />
                       <UserChat
                         isChat={false}
+                        isGroup={false}
                         name={item.full_name}
                         userImg={
                           item.profile_picture ||
@@ -317,6 +342,7 @@ const HomePage = () => {
                       {item.is_group ? (
                         <UserChat
                           name={item.chat_name}
+                          isGroup={true}
                           userImg={
                             item.chat_image ||
                             "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
@@ -325,6 +351,7 @@ const HomePage = () => {
                       ) : (
                         <UserChat
                           isChat={true}
+                          isGroup={false}
                           name={
                             auth.reqUser?.id !== item.users[0]?.id
                               ? item.users[0].full_name
@@ -353,6 +380,59 @@ const HomePage = () => {
                     </div>
                   ))}
               </div>
+            )}
+
+            {!Tab1 &&(
+              <div className="bg-white overflow-y-scroll h-[440px]">
+                {!chat.chats?.error &&
+                  chat?.chats?.map((item, index) => (
+                    <div onClick={() => handleCurrentChat(item)} key={item.id}>
+                      <hr />
+                      {item.is_group ? (
+                        <UserChat
+                          name={item.chat_name}
+                          isGroup={true}
+                          userImg={
+                            item.chat_image ||
+                            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
+                          }
+                        />
+                      ) : (
+                        <UserChat
+                          isChat={true}
+                          isGroup={false}
+                          name={
+                            auth.reqUser?.id !== item.users[0]?.id
+                              ? item.users[0].full_name
+                              : item.users[1].full_name
+                          }
+                          userImg={
+                            auth.reqUser.id !== item.users[0].id
+                              ? item.users[0].profile_picture ||
+                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
+                              : item.users[1].profile_picture ||
+                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
+                          }
+                          notification={notifications.length}
+                          isNotification={
+                            notifications[0]?.chat?.id === item.id
+                          }
+                          message={
+                            (item.id ===
+                              messages[messages.length - 1]?.chat?.id &&
+                              messages[messages.length - 1]?.content) ||
+                            (item.id === notifications[0]?.chat?.id &&
+                              notifications[0]?.content)
+                          }
+                        />
+                      )}
+                    </div>
+                  ))}
+              </div>
+            )}
+
+
+
             </div>
           )}
         </div>
