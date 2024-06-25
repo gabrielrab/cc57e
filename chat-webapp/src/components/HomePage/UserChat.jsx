@@ -1,5 +1,6 @@
 import React from "react";
 import { AiOutlineDown } from "react-icons/ai";
+import { BsPeople } from "react-icons/bs";
 
 const UserChat = ({
   name,
@@ -7,13 +8,14 @@ const UserChat = ({
   sentTime,
   isChat,
   message,
+  isGroup,
   notification,
   isNotification,
 }) => {
   return (
-    <div className="flex items-center justify-center py-2 group cursor-pointer">
+    <div className="flex items-center justify-center py-4 group cursor-pointer bg-white hover:bg-amber-200 hover:border-b-2 hover:border-zinc-800">
       <div className="w=[20%]">
-        <img className="h-14 w-14 rounded-full" src={userImg} alt="" />
+        <img className="h-10 w-10 rounded-full" src={userImg} alt="" />
       </div>
       <div className="pl-5 w-[80%]">
         <div className="flex justify-between items-center">
@@ -27,13 +29,14 @@ const UserChat = ({
               <p className="text-xs p-1 px-2 text-white bg-green-500 rounded-full">
                 {notification}
               </p>
-            )}
-            <div className="flex justify-end flex-1">
-              {isChat && <AiOutlineDown className="hidden group-hover:block" />}
-            </div>
-            
+            )}         
           </div>
         </div>
+      </div>
+      <div className="w-3">
+        {isGroup &&(
+          <BsPeople />
+        )}
       </div>
     </div>
   );
