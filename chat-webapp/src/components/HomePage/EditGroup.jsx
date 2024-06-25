@@ -20,7 +20,7 @@ const EditGroup = ({ handleBack , chat }) => {
   };
 
   const handleRemoveMember = (userId) => {
-    
+    console.log(userId)
   };
 
 
@@ -62,7 +62,7 @@ const EditGroup = ({ handleBack , chat }) => {
             {chat.users?.map((item, index) => (
               <div className="w-full p-2 flex justify-between items-center border-b border-zinc-800">
                   {item.full_name}
-                  <div className="cursor-pointer" onClick={handleRemoveMember(item.id)}>
+                  <div className="cursor-pointer" onClick={() => handleRemoveMember(item.id)}>
                     <BsTrash className="fill-red-950"/>
                   </div>
               </div>
