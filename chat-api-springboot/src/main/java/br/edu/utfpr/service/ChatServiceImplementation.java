@@ -102,7 +102,7 @@ public class ChatServiceImplementation implements ChatService {
 					.getResultList();
 
 			for (Object[] row : result) {
-				Long id = ((Number) row[0]).longValue();
+				Long id = ((Number) row[5]).longValue();
 				String email = (String) row[6];
 				String fullName = (String) row[7];
 				String password = (String) row[8];
