@@ -240,7 +240,7 @@ const HomePage = () => {
             <div className="h-full">
               <CreateGroup
                 setIsGoup={setIsCreateGroup}
-                handleBack={handleBack}
+                handleBack={() => setIsCreateGroup(false)}
               />{" "}
             </div>
           )}
