@@ -36,12 +36,12 @@ const NewGroup = ({ handleBack, groupMember,setIsCreateGroup }) => {
 
   return (
     <div className=" w-full h-full">
-      <div className=" flex items-center space-x-10 bg-[#008069] text-white pt-16 px-10 pb-5">
+      <div className=" flex items-center space-x-3 bg-amber-400 text-white pt-6 px-10 pb-5 border-b-4 border-black">
         <BsArrowLeft
           onClick={handleBack}
           className="cursor-pointer text-2xl font-bold"
         />
-        <p className="text-xl font-semibold">New Group</p>
+        <p className="text-xl font-semibold">Novo Grupo</p>
       </div>
 
       <div className="flex flex-col justify-center items-center my-12">
@@ -95,9 +95,9 @@ const NewGroup = ({ handleBack, groupMember,setIsCreateGroup }) => {
           value={groupName}
         />
       </div>
-      {groupName && <div className=" py-10 bg-slate-200 flex items-center justify-center">
+      {groupName && <div className=" py-10 bg-white flex items-center justify-center">
         <Button onClick={handleCreateGroup} variant="text">
-          <div className="bg-[#0c977d] rounded-full p-4 ">
+          <div className="bg-amber-400 rounded-full p-4 ">
             <BsCheck2 className="text-white font-bold text-3xl" />
           </div>
         </Button>

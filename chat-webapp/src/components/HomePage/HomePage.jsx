@@ -412,6 +412,7 @@ const HomePage = () => {
                 {messages.length > 0 &&
                   messages?.map((item, index) => (
                     <Message
+                      username={item.user.full_name}
                       messageRef={messageRef}
                       key={item.id}
                       isReqUserMessage={item.user?.id !== auth.reqUser.id}
@@ -456,8 +457,8 @@ const HomePage = () => {
         )}
 
         {isEditGroup &&(
-          <div className="absolute right-0 top-0 bottom-0 bg-white">
-            <EditGroup handleBack={handleBackEdit}/>
+          <div className="absolute right-0 top-0 bottom-0 bg-white w-[30%]">
+            <EditGroup handleBack={handleBackEdit}  chat = {currentChat}/>
           </div>
         )}
       </div>

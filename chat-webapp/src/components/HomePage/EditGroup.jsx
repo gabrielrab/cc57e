@@ -1,28 +1,31 @@
 import React from "react";
 import { useState } from "react";
-import { BsArrowLeft, BsCheck2, BsPencil } from "react-icons/bs";
+import { BsArrowLeft, BsCheck2, BsPencil, BsTrash, BsX } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { currentUser, updateUser } from "../../Redux/Auth/Action";
 import SimpleSnackbar from "./SimpleSnackbar";
+import { PutRemoveMember } from "../../Redux/Chat/Action";
 
-const EditGroup = ({ handleBack }) => {
+const EditGroup = ({ handleBack , chat }) => {
   const { auth } = useSelector((store) => store);
-  const [tempPicture, setTempPicture] = useState(null);
   const dispatch = useDispatch();
-  const [username, setUsername] = useState(auth.reqUser.full_name);
-  const [flag, setFlag] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState('');
+  const token = localStorage.getItem("token");
+  const [groupName, setGroupName] = useState(chat.chat_name);
+  const [groupImage, setgroupImage] = useState(chat.chat_image);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
-  const data = {
-    id: auth.reqUser?.id,
-    token: localStorage.getItem("token"),
-    data: { full_name:username },
+  const handleEditGroup = () => {
+    
+    
   };
 
-  const handleClose = () => setOpen(false);
+  const handleRemoveMember = (userId) => {
+    
+  };
+
+
   return (
-    <div className=" w-full h-full">
+    <div className=" w-full h-full overflow-auto">
       <div className=" flex items-center space-x-3 bg-amber-400 text-white pt-6 px-10 pb-5 border-b-4 border-black">
         <BsArrowLeft
           onClick={handleBack}
@@ -32,104 +35,62 @@ const EditGroup = ({ handleBack }) => {
       </div>
 
       <div className="flex flex-col justify-center items-center my-12">
-        <label htmlFor="imgInput">
+
+        <label className="relative " htmlFor="imgInput">
           <img
-            className="rounded-full w-[15vw] h-[15vw] cursor-pointer"
-            src={tempPicture || auth.reqUser.profile_picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"}
+            className="rounded-full w-[15vw] h-[15vw]"
+            src={
+              groupImage ||
+              "https://cdn.pixabay.com/photo/2016/04/15/18/05/computer-1331579__340.png"
+            }
             alt=""
           />
+          {isImageUploading}
         </label>
 
-        <input
-          type="file"
-          id="imgInput"
-          className="hidden"
-          onChange={(e) => {
-            const uploadPic = (pics) => {
-              const data = new FormData();
-              data.append("file", pics);
-              data.append("upload_preset", "ashok21");
-              data.append("cloud_name", "zarmariya");
-              fetch("https://api.cloudinary.com/v1_1/zarmariya/image/upload", {
-                method: "post",
-                body: data,
-              })
-                .then((res) => res.json())
-                .then((data) => {
-                  setTempPicture(data.url.toString());
-                  setMessage("profile image updated successfully")
-                  setOpen(true);
-                  console.log("imgurl", data.url.toString());
-                  const dataa = {
-                    id: auth.reqUser.id,
-                    token: localStorage.getItem("token"),
-                    data: { profile_picture: data.url.toString() },
-                  };
-                  // userUpdate(id, )
-                  dispatch(updateUser(dataa));
-                  
-                });
-            };
-            if (!e.target.files) return;
-
-            uploadPic(e.target.files[0]);
-          }}
-        />
       </div>
 
-      <div className="bg-white px-3 ">
-        <p className="py-3">Seu Nome</p>
-        {!flag && (
-          <div className="w-full flex justify-between items-center">
-            <p className="py-3">{username || auth.reqUser?.full_name}</p>
-            <BsPencil
-              onClick={() => {
-                setFlag(true);
-                console.log(flag, "-----");
-              }}
-              className="cursor-pointer"
-            />
-          </div>
-        )}
 
-        {flag && (
-          <div className="w-full flex justify-between items-center py-2">
-            <input
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full outline-none border-b-2 border-zinc-700 px-2  py-2"
-              type="text"
-              placeholder="Digite seu nome"
-              value={username}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  dispatch(updateUser(data));
-                  setFlag(false);
-                }
-              }}
-            />
-            <BsCheck2
-              onClick={() => {
-                setMessage("Nome atualizado com sucesso!")
-                dispatch(updateUser(data));
-                setFlag(false);
-                setOpen(true);
-              }}
-              className="cursor-pointer text-2xl"
-            />
-          </div>
-        )}
+      <div className="w-full flex flex-col justify-between items-center py-2 px-5">
+      <p className="w-full p-3 border-b-2 border-zinc-800 text-left font-bold">Nome do grupo</p>
+      <p className="w-full outline-none border-b border-zinc-800 px-2  py-2 bg-transparent">{groupName}</p>
       </div>
 
-      <div className="px-3 my-5">
-        <p className="py-10">
-          Este não é o seu nome de usuário. Esse nome será exibido para seus contatos do WhatsUT.
-        </p>
+      <div className="w-full flex flex-col justify-between items-center py-3 px-5">
+        <p className="w-full p-3 border-b-2 border-zinc-800 text-left font-bold">Membros</p>
+        <div className="w-full h-30 overflow-auto">
+            {chat.users?.map((item, index) => (
+              <div className="w-full p-2 flex justify-between items-center border-b border-zinc-800">
+                  {item.full_name}
+                  <div className="cursor-pointer" onClick={handleRemoveMember(item.id)}>
+                    <BsTrash className="fill-red-950"/>
+                  </div>
+              </div>
+            ))}
+          </div>
+      </div>
+
+      <div className="w-full flex flex-col justify-between items-center py-3 px-5">
+        <p className="w-full p-3 border-b-2 border-zinc-800 text-left font-bold">Pedidos para entrar</p>
+        <div className="w-full h-30 overflow-auto">
+            {chat.pendingUsers?.map((item, index) => (
+              <div className="w-full p-2 flex justify-between items-center border-b border-zinc-800">
+                  {item.full_name}
+
+                  <div className="w-fit flex justify-between items-center">
+                    <div className="p-2">
+                      <BsCheck2 />
+                    </div>
+                    <div className="p-2">
+                      <BsX />
+                    </div>
+                  </div>
+              </div>
+            ))}
+          </div>
       </div>
 
       <SimpleSnackbar
-        message={message}
-        open={open}
-        handleClose={handleClose}
         type={"success"}
       />
     </div>
