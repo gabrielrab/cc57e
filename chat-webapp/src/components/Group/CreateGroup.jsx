@@ -1,38 +1,62 @@
 import React, { useEffect, useState } from "react";
+import { BASE_URL } from "../../Config/Api";
 import {
   BsArrowLeft,
   BsArrowRight,
-  BsCheck2,
-  BsFilter,
-  BsPencil,
 } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
-import { searchUser, updateUser } from "../../Redux/Auth/Action";
-import { AiOutlineSearch } from "react-icons/ai";
 import UserChat from "../HomePage/UserChat";
 import SelectedMember from "./SelectedMember";
 import NewGroup from "./NewGroup";
+import { useSelector } from "react-redux";
 
 const CreateGroup = ({handleBack, setIsGoup}) => {
-  const { auth, chat } = useSelector((store) => store);
+  const { auth } = useSelector((store) => store);
 
   const [groupMember, setGroupMember] = useState(new Set());
-
-  const dispatch = useDispatch();
-
-  const [querys, setQuerys] = useState("");
+  const [users, setUsers] = useState([]);
 
   const token = localStorage.getItem("token");
 
   const [newGroup, setNewGroup] = useState(false);
 
-  const handleSearch = (keyword) => {
-    dispatch(searchUser({ userId: auth.reqUser?.id, keyword, token }));
-  };
+
   const handleRemoveMember = (item) => {
-    groupMember.delete(item);
-    setGroupMember(groupMember);
+    const newGroupMember = new Set(groupMember);
+    newGroupMember.delete(item);
+    setGroupMember(newGroupMember);
+
+    const newUsers = [...users, item];
+    setUsers(newUsers);
   };
+
+  const handleAddMember = (item) => {
+    const newGroupMember = new Set(groupMember);
+    newGroupMember.add(item);
+    setGroupMember(newGroupMember);
+  
+    const newUsers = users.filter(user => user.id !== item.id);
+    setUsers(newUsers);
+  };
+
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch(`${BASE_URL}/users/all`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+
+      const filteredUsers = data.filter(user => user.id !== auth.reqUser.id);
+      setUsers(filteredUsers);
+    };
+
+    fetchUsers();
+  }, [token, auth.reqUser.id]);
+
+
   return (
     <div className="w-full h-full">
       {!newGroup && (
@@ -55,28 +79,13 @@ const CreateGroup = ({handleBack, setIsGoup}) => {
                   />
                 ))}
             </div>
-
-            <input
-              onChange={(e) => {
-                setQuerys(e.target.value);
-                handleSearch(e.target.value);
-              }}
-              className="outline-none border-b border-[#cccccc] px-2  py-2 w-[93%]"
-              type="text"
-              placeholder="Pesquisar..."
-              value={querys}
-            />
           </div>
 
           <div className="bg-white overflow-y-scroll h-[50.2vh]">
-            {querys &&
-              auth.searchUser?.map((item, index) => (
+            {users &&
+              users?.map((item) => (
                 <div
-                  onClick={() => {
-                    groupMember.add(item);
-                    setGroupMember(groupMember);
-                    setQuerys("");
-                  }}
+                  onClick={() => handleAddMember(item)}
                   key={item?.id}
                 >
                   <hr />
@@ -107,7 +116,8 @@ const CreateGroup = ({handleBack, setIsGoup}) => {
 
       {newGroup && (
         <div>
-          <NewGroup groupMember={groupMember} setIsCreateGroup={setIsGoup}/>
+          <NewGroup groupMember={groupMember} setIsCreateGroup={setIsGoup} handleBack={
+            () => setNewGroup(false)}/>
         </div>
       )}
     </div>

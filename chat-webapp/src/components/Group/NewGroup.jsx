@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { BsArrowLeft, BsArrowRight, BsCheck2, BsPencil } from "react-icons/bs";
-import UserChat from "../HomePage/UserChat";
-import { useDispatch, useSelector } from "react-redux";
-import { updateUser } from "../../Redux/Auth/Action";
+import { BsArrowLeft, BsCheck2 } from "react-icons/bs";
+import { useDispatch } from "react-redux";
 import { createGroupChat } from "../../Redux/Chat/Action";
 import { Button, CircularProgress } from "@mui/material";
 
 const NewGroup = ({ handleBack, groupMember,setIsCreateGroup }) => {
-  const { auth } = useSelector((store) => store);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
   const [groupName, setGroupName] = useState("");
   const [groupImage, setgroupImage] = useState(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [leaveAction, setLeaveAction] = useState(0);
 
   const handleCreateGroup = () => {
     let userIds = [];
@@ -24,7 +22,9 @@ const NewGroup = ({ handleBack, groupMember,setIsCreateGroup }) => {
       userIds,
       chat_name: groupName,
       chat_image: groupImage,
+      leave_strategy: leaveAction,
     };
+    
     const data = {
       group,
       token,
@@ -86,14 +86,38 @@ const NewGroup = ({ handleBack, groupMember,setIsCreateGroup }) => {
         />
       </div>
 
-      <div className="w-full flex justify-between items-center py-2 px-5">
+      <div className="w-full flex flex-col justify-between items-center py-2 px-5">
         <input
           onChange={(e) => setGroupName(e.target.value)}
           className="w-full outline-none border-b-2 border-green-700 px-2  py-2 bg-transparent"
           type="text"
-          placeholder="Group Subject"
+          placeholder="Nome do Grupo"
           value={groupName}
         />
+        <div className="py-4 flex flex-col">
+          <label className="inline-flex items-center">
+            <input
+              type="radio"
+              className="form-radio"
+              name="leaveAction"
+              value="chooseAdmin"
+              checked={leaveAction === 0}
+              onChange={() => setLeaveAction(0)}
+            />
+            <span className="ml-2">Ao sair, escolher um administrador aleatório</span>
+          </label>
+          <label className="inline-flex items-center">
+            <input
+              type="radio"
+              className="form-radio"
+              name="leaveAction"
+              value="deleteGroup"
+              checked={leaveAction === 1}
+              onChange={() => setLeaveAction(1)}
+            />
+            <span className="ml-2">Ao sair, deletar grupo</span>
+          </label>
+        </div>
       </div>
       {groupName && <div className=" py-10 bg-white flex items-center justify-center">
         <Button onClick={handleCreateGroup} variant="text">
