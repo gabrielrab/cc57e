@@ -95,7 +95,7 @@ public class ChatController {
 	}
 
 	@PutMapping("/{chatId}/add/{userId}")
-	public ResponseEntity<ChatDto> addUserToGroupHandler(@RequestHeader("Autorization") String jwt,
+	public ResponseEntity<ChatDto> addUserToGroupHandler(@RequestHeader("Authorization") String jwt,
 			@PathVariable Integer chatId, @PathVariable Integer userId)
 			throws UserException, ChatException {
 		User reqUser = userService.findUserProfile(jwt);
@@ -108,7 +108,7 @@ public class ChatController {
 	}
 
 	@PutMapping("/{chatId}/accept/{userId}")
-	public ResponseEntity<ChatDto> acceptUserToGroupHandler(@RequestHeader("Autorization") String jwt,
+	public ResponseEntity<ChatDto> acceptUserToGroupHandler(@RequestHeader("Authorization") String jwt,
 			@PathVariable Integer chatId, @PathVariable Integer userId)
 			throws UserException, ChatException {
 		User reqUser = userService.findUserProfile(jwt);
@@ -122,7 +122,7 @@ public class ChatController {
 
 	@PutMapping("/{chatId}/rename")
 	public ResponseEntity<ChatDto> renameGroupHandler(@PathVariable Integer chatId,
-			@RequestBody RenameGroupRequest renameGoupRequest, @RequestHeader("Autorization") String jwt)
+			@RequestBody RenameGroupRequest renameGoupRequest, @RequestHeader("Authorization") String jwt)
 			throws ChatException, UserException {
 
 		User reqUser = userService.findUserProfile(jwt);

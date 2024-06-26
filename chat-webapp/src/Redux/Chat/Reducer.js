@@ -1,4 +1,4 @@
-import { CREATE_GROUP_CHAT, CREATE_SINGLE_CHAT, GET_ALL_CHAT, PUT_REMOVE_MEMBER, GET_ALL_PUBLI_CHAT } from "./ActionType"
+import { CREATE_GROUP_CHAT, CREATE_SINGLE_CHAT, GET_ALL_CHAT, PUT_REMOVE_MEMBER, GET_ALL_PUBLI_CHAT, PUT_SEND_INVITE_MEMBER, PUT_ACCEPT_INVITE_MEMBER } from "./ActionType"
 
 const initialState = {
  chats:null,
@@ -22,7 +22,15 @@ export const chatReducer = (store = initialState, { type, payload }) => {
 
  else if(type === PUT_REMOVE_MEMBER){
    return {...store, response:payload}
-}
+ }
+   
+ else if(type === PUT_SEND_INVITE_MEMBER){
+   return {...store, response:payload}
+ }
+
+ else if(type === PUT_ACCEPT_INVITE_MEMBER){
+   return {...store, response:payload}
+ }
 
  return store
 }

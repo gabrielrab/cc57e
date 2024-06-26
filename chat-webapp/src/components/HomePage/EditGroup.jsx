@@ -4,9 +4,9 @@ import { BsArrowLeft, BsCheck2, BsPencil, BsTrash, BsX } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { currentUser, updateUser } from "../../Redux/Auth/Action";
 import SimpleSnackbar from "./SimpleSnackbar";
-import { PutRemoveMember } from "../../Redux/Chat/Action";
+import { PutAcceptInvite, PutRemoveMember } from "../../Redux/Chat/Action";
 
-const EditGroup = ({ handleBack, chat, user , exitGroupHandle, handleBackRemove }) => {
+const EditGroup = ({ handleBack, chat, user , exitGroupHandle, handleBackRemove, handleBackAccept }) => {
   const { auth } = useSelector((store) => store);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
@@ -17,6 +17,12 @@ const EditGroup = ({ handleBack, chat, user , exitGroupHandle, handleBackRemove 
     dispatch(PutRemoveMember(token, chat.id, userId));
     chat.users = chat.users.filter(users => users.id !== userId);
     handleBackRemove();
+  };
+
+  const handleAcceptInvite = (userId) => {
+    dispatch(PutAcceptInvite(token, chat.id, userId));
+    chat.pendingUsers = chat.pendingUsers.filter(users => users.id !== userId);
+    handleBackAccept();
   };
 
   const exitGroup = () => {
@@ -86,11 +92,8 @@ const EditGroup = ({ handleBack, chat, user , exitGroupHandle, handleBackRemove 
                 {item.full_name}
 
                 <div className="w-fit flex justify-between items-center">
-                  <div className="p-2">
+                  <div className="p-2 cursor-pointer" onClick={()=> handleAcceptInvite(item.id)}>
                     <BsCheck2 />
-                  </div>
-                  <div className="p-2">
-                    <BsX />
                   </div>
                 </div>
               </div>

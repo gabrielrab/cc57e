@@ -14,7 +14,7 @@ import UserChat from "./UserChat";
 import Message from "./Message";
 import { useDispatch, useSelector } from "react-redux";
 import { currentUser, searchUser } from "../../Redux/Auth/Action";
-import { createSingleChat, getAllChat, getAllPubliChat } from "../../Redux/Chat/Action";
+import { PutSendInvite, createSingleChat, getAllChat, getAllPubliChat } from "../../Redux/Chat/Action";
 import { createNewMessage, getAllMessage } from "../../Redux/Message/Action";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
@@ -51,6 +51,8 @@ const HomePage = () => {
   const [open, setOpen] = useState(false);
   const [openRemove, setOpenRemove] = useState(false);
   const [openExit, setOpenExit] = useState(false);
+  const [openInvite, setOpenInvite] = useState(false);
+  const [openAccept, setOpenAccept] = useState(false);
   const handleClose = () => setOpen(false);
   const [stompClient, setStompClient] = useState(null);
   const [isCreateGroup, setIsCreateGroup] = useState(false);
@@ -233,6 +235,18 @@ const HomePage = () => {
     setIsEditGroup(false)
   };
 
+  const handleBackAccept = () => { 
+    setOpenAccept(true);
+    setIsEditGroup(false)
+  };
+
+  const handleInvite = (chatId , chat) => { 
+    console.log("token--",{token});
+    dispatch(PutSendInvite(token, chatId, auth.reqUser?.id));
+    chat.pendingUsers.push(auth.reqUser);
+    setOpenInvite(true);
+  };
+
   useEffect(() => {
     setOpen(true);
     connect();
@@ -301,7 +315,7 @@ const HomePage = () => {
                     }}
                     className="border-none outline-none py-2 bg-gray-100 rounded-md w-full pl-9"
                     type="text"
-                    placeholder="Procure ou comece uma nova conversa"
+                    placeholder="Procure pessoas para conversar individualmente!"
                     value={querys}
                   />
                   <AiOutlineSearch className="absolute top-7 left-6" />
@@ -406,43 +420,15 @@ const HomePage = () => {
               <div className="bg-white overflow-y-scroll h-[440px]">
                 {!chatPubli.chatPubli?.error &&
                   chatPubli.chatPubli?.map((item, index) => (
-                    <div  key={index}>
-                      <hr />
-                      {item.is_group ? (
+                    <div  key={index} onClick={()=>handleInvite(item.id , item)}>
+                      {item.is_group  && item.users[0] != null && item.admins[0].id != auth.reqUser.id && item.admins[0] != null && item.users.find(user => user.id == auth.reqUser.id) == null &&(
                         <UserChat
                           name={item.chat_name}
                           isGroup={true}
+                          SendInvite={item.pendingUsers.find(user => user.id == auth.reqUser.id)}
                           userImg={
                             item.chat_image ||
                             "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
-                          }
-                        />
-                      ) : (
-                        <UserChat
-                          isChat={true}
-                          isGroup={false}
-                          name={
-                            auth.reqUser?.id !== item.users[0]?.id
-                              ? item.users[0].full_name
-                              : item.users[1].full_name
-                          }
-                          userImg={
-                            auth.reqUser.id !== item.users[0].id
-                              ? item.users[0].profile_picture ||
-                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
-                              : item.users[1].profile_picture ||
-                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
-                          }
-                          notification={notifications.length}
-                          isNotification={
-                            notifications[0]?.chat?.id === item.id
-                          }
-                          message={
-                            (item.id ===
-                              messages[messages.length - 1]?.chat?.id &&
-                              messages[messages.length - 1]?.content) ||
-                            (item.id === notifications[0]?.chat?.id &&
-                              notifications[0]?.content)
                           }
                         />
                       )}
@@ -550,7 +536,6 @@ const HomePage = () => {
                     }
                   }}
                 />
-                <BsMicFill />
               </div>
             </div>
           </div>
@@ -558,7 +543,7 @@ const HomePage = () => {
 
         {isEditGroup &&(
           <div className="absolute right-0 top-0 bottom-0 bg-white w-[30%]">
-            <EditGroup handleBack={handleBackEdit}  chat = {currentChat} user={auth.reqUser} exitGroupHandle={exitGroupHandle} handleBackRemove={handleBackRemove}/>
+            <EditGroup handleBack={handleBackEdit}  chat = {currentChat} user={auth.reqUser} exitGroupHandle={exitGroupHandle} handleBackRemove={handleBackRemove} handleBackAccept={handleBackAccept}/>
           </div>
         )}
       </div>
@@ -580,6 +565,20 @@ const HomePage = () => {
         message={`Você saiu do grupo!`}
         open={openExit}
         handleClose={()=>setOpenExit(!openExit)}
+        type={"success"}
+      />
+
+      <SimpleSnackbar
+        message={`Pedido de entrada enviado para o administrador do grupo!`}
+        open={openInvite}
+        handleClose={()=>setOpenInvite(!openInvite)}
+        type={"success"}
+      />
+
+      <SimpleSnackbar
+        message={`Invite aceito!`}
+        open={openAccept}
+        handleClose={()=>setOpenAccept(!openAccept)}
         type={"success"}
       />
     </div>

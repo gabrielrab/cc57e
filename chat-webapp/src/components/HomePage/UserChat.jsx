@@ -1,6 +1,6 @@
 import React from "react";
 import { AiOutlineDown } from "react-icons/ai";
-import { BsPeople } from "react-icons/bs";
+import { BsCheck, BsPeople } from "react-icons/bs";
 
 const UserChat = ({
   name,
@@ -9,6 +9,7 @@ const UserChat = ({
   isChat,
   message,
   isGroup,
+  SendInvite,
   notification,
   isNotification,
 }) => {
@@ -37,6 +38,12 @@ const UserChat = ({
         {isGroup &&(
           <BsPeople />
         )}
+      </div>
+
+      <div className="ml-1 w-3">
+        {SendInvite != null &&(
+          <BsCheck />
+      )}
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ export const GET_ALL_CHAT = 'GET_ALL_CHAT';
 export const GET_ALL_PUBLI_CHAT = 'GET_ALL_PUBLI_CHAT';
 export const CREATE_GROUP_CHAT="CREATE_GROUP_CHAT";
 export const PUT_REMOVE_MEMBER="PUT_REMOVE_MEMBER";
+export const PUT_SEND_INVITE_MEMBER="PUT_SEND_INVITE_MEMBER";
+export const PUT_ACCEPT_INVITE_MEMBER="PUT_ACCEPT_INVITE_MEMBER";
 
 // export const 
 // export const 

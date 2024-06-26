@@ -1,5 +1,5 @@
 import { BASE_URL } from "../../Config/Api";
-import { CREATE_GROUP_CHAT, CREATE_SINGLE_CHAT, GET_ALL_CHAT, PUT_REMOVE_MEMBER , GET_ALL_PUBLI_CHAT } from "./ActionType";
+import { CREATE_GROUP_CHAT, CREATE_SINGLE_CHAT, GET_ALL_CHAT, PUT_REMOVE_MEMBER , GET_ALL_PUBLI_CHAT, PUT_SEND_INVITE_MEMBER, PUT_ACCEPT_INVITE_MEMBER } from "./ActionType";
 
 export const createSingleChat = (data) => async(dispatch) => {
   try {
@@ -78,10 +78,35 @@ export const PutRemoveMember = (token , chatId , userId) => async(dispatch) => {
          "Authorization":`Bearer ${token}`
        }
      });
-     console.log("token ----- ",token);
-     console.log("chatid ----- ",chatId);
-     console.log("userid ----- ",userId);
      const response = await res.json();
      console.log("Put remove member ----- ",response)
   dispatch({type:PUT_REMOVE_MEMBER, payload:response})
  }
+
+
+ export const PutSendInvite = (token , chatId , userId) => async(dispatch) => {
+  const res = await fetch(`${BASE_URL}/chats/${chatId}/add/${userId}`, {
+       method:"PUT",
+       headers: {
+         "Content-Type": "application/json",
+         "Authorization":`Bearer ${token}`
+       }
+     });
+     const response = await res.json();
+     console.log("Put Send Invite ----- ",response)
+  dispatch({type:PUT_SEND_INVITE_MEMBER, payload:response})
+ }
+
+ export const PutAcceptInvite = (token , chatId , userId) => async(dispatch) => {
+  const res = await fetch(`${BASE_URL}/chats/${chatId}/accept/${userId}`, {
+       method:"PUT",
+       headers: {
+         "Content-Type": "application/json",
+         "Authorization":`Bearer ${token}`
+       }
+     });
+     const response = await res.json();
+     console.log("Put Accept Invite ----- ",response)
+  dispatch({type:PUT_ACCEPT_INVITE_MEMBER, payload:response})
+ }
+
