@@ -466,7 +466,7 @@ const HomePage = () => {
                 <div className="py-3 space-x-4 flex items-center px-3 bg" onClick={() => setIsEditGroup(true)}>
                   <img
                     className="w-10 h-10 rounded-full"
-                    src={currentChat?.is_group? (currentChat?.chat_image || "https://img.freepik.com/free-vector/user-group-outline-circle_78370-4712.jpg?size=338&ext=jpg"):
+                    src={currentChat?.is_group? (currentChat?.chat_image || "https://i.ibb.co/XWwBS4L/removal-ai-93923e6b-9431-43a3-8c13-17095cfa42ef-whatsapp-image-2024-06-23-at-18-54-23.png"):
                       (auth.reqUser?.id !== currentChat?.users[0].id
                         ? currentChat?.users[0].profile_picture ||
                           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
