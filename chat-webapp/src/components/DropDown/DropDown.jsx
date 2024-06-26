@@ -46,7 +46,6 @@ const handleLogout=()=>{
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Perfil</MenuItem>
         <MenuItem onClick={handleCreateGroup}>Criar Grupo</MenuItem>
         <MenuItem onClick={handleLogout}>Sair</MenuItem>
         

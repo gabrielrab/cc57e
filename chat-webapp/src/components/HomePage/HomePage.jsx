@@ -129,10 +129,10 @@ const HomePage = () => {
     if (token) dispatch(getAllChat(token));
   }, [token, chat.singleChat,chat.createdGroup]);
 
+
+  //get all groups
   useEffect(() => {
-    console.log("CHATS PUBLI ANTES",chatPubli)
     if (token) dispatch(getAllPubliChat(token));
-    console.log("CHATS PUBLI",chatPubli)
   }, [token]);
 
   //create new message
@@ -152,10 +152,9 @@ const HomePage = () => {
     selectedChatCompare = currentChat;
   }, [currentChat, message.newMessage]);
 
-  //setMessage and sent to server
+  //setMessage and send to server
   useEffect(() => {
     if (message.newMessage && stompClient) {
-      // soket.emit("send-message", message.newMessage);
       setMessages([...messages, message.newMessage]);
       stompClient?.send("/app/message", {}, JSON.stringify(message.newMessage));
       messageRef.current?.scrollIntoView({
@@ -168,7 +167,7 @@ const HomePage = () => {
     if (message.messages) setMessages(message.messages);
   }, [message.messages]);
 
-  //search user by name
+  //Search User
   const handleSearch = (keyword) => {
     dispatch(searchUser({ userId: auth.reqUser?.id, keyword, token }));
   };
@@ -179,12 +178,10 @@ const HomePage = () => {
         `/user/${currentChat?.id}/private`,
         onMessageRecive
       );
-      // stompClient.subscribe('/user/'+currentChat?.id+'/private', onMessageRecive);
       stompClient.subscribe(
         "/group/" + currentChat.id.toString(),
         onMessageRecive
       );
-      // stompClient.subscribe('/group/public', onMessageRecive);
       return () => {
         subscription.unsubscribe();
       };
@@ -213,8 +210,6 @@ const HomePage = () => {
         {},
         JSON.stringify(value)
       );
-      // stompClient.send("/app/message", {}, JSON.stringify(value));
-      // setMessages("")
     }
   };
 
@@ -321,6 +316,8 @@ const HomePage = () => {
                   <AiOutlineSearch className="absolute top-7 left-6" />
                 </div>
               </div>
+
+              {/* Tabs */}
               
               {Tab1 && (
               <div className="flex justify-evenly p-4">
@@ -344,7 +341,7 @@ const HomePage = () => {
               )}
 
            
-              {/* all user */}
+              {/* all chats user */}
               {Tab1 &&(
               <div className="bg-white overflow-y-scroll h-[440px]">
                 {querys &&
@@ -416,6 +413,8 @@ const HomePage = () => {
               </div>
             )}
 
+            {/* all groups */}
+
             {!Tab1 &&(
               <div className="bg-white overflow-y-scroll h-[440px]">
                 {!chatPubli.chatPubli?.error &&
@@ -481,9 +480,6 @@ const HomePage = () => {
                       ? currentChat?.users[0].full_name
                       : currentChat?.users[1].full_name)}
                   </p>
-                </div>
-                <div className="py-3 space-x-4 flex items-center px-3 bg">
-                  <BsThreeDotsVertical />
                 </div>
               </div>
             </div>
