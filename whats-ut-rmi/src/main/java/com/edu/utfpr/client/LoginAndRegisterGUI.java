@@ -28,8 +28,8 @@ public class LoginAndRegisterGUI extends JFrame {
 
         ImageIcon logoIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/logo.png")));
         Image image = logoIcon.getImage();
-        Image newimg = image.getScaledInstance(image.getWidth(null) / 2, image.getHeight(null) / 2, java.awt.Image.SCALE_SMOOTH);
-        logoIcon = new ImageIcon(newimg);
+        Image resizedImage = image.getScaledInstance(image.getWidth(null) / 2, image.getHeight(null) / 2, java.awt.Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(resizedImage);
         JLabel logoLabel = new JLabel();
         logoLabel.setIcon(logoIcon);
         constraints.gridwidth = 2;
