@@ -40,14 +40,15 @@ public class ChatClientGUI extends JFrame {
 
         Container c = getContentPane();
         JPanel outerPanel = new JPanel(new BorderLayout());
+        JPanel leftPanel = createChatPanel();
 
         outerPanel.add(createChatMessagesPanel(), BorderLayout.NORTH);
-        // outerPanel.add(createGroupButton(), BorderLayout.NORTH);
         outerPanel.add(createSendMessageInput(), BorderLayout.CENTER);
 
         c.setLayout(new BorderLayout());
         c.add(outerPanel, BorderLayout.CENTER);
-        c.add(createChatPanel(), BorderLayout.WEST);
+        c.add(leftPanel, BorderLayout.WEST);
+        leftPanel.add(createGroupButton(), BorderLayout.NORTH);
 
         frame.add(c);
         frame.pack();

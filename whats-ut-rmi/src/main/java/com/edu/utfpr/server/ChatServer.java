@@ -76,6 +76,7 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
                 true);
         groups.add(chat);
         updatePublicGroupList();
+        updateMyChatsList(creator);
     }
 
     @Override

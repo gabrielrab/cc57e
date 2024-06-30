@@ -17,14 +17,15 @@ import java.rmi.RemoteException;
 public class NewGroupDialog {
 
     public void openCreateGroupDialog(ChatClient chatClient) {
+
         JDialog dialog = new JDialog((Frame) null, "Criar Novo Grupo", true);
-        dialog.setSize(300, 200);
+        dialog.setSize(500, 200);
         dialog.setLayout(new BorderLayout());
         dialog.setAlwaysOnTop(true);
 
         // Form Panel
         JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(3, 2));
+        formPanel.setLayout(new GridLayout(5, 2));
 
         // Form components
         JLabel nameLabel = new JLabel("Nome do Grupo:");
@@ -58,7 +59,7 @@ public class NewGroupDialog {
                 String groupName = nameField.getText();
                 Boolean radioRamdom = radio1.isSelected();
                 Boolean radioDelete = radio1.isSelected();
-                if (!groupName.trim().isEmpty() && (radioRamdom || radioDelete == true)) {
+                if (!groupName.trim().isEmpty() && (radioRamdom || radioDelete )) {
                     // Aqui você pode adicionar a lógica para criar o grupo
                     try {
                         chatClient.createChatGroup(groupName, chatClient.userName, radioRamdom);
