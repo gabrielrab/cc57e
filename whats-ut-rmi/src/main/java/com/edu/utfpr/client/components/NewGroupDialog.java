@@ -1,17 +1,9 @@
 package com.edu.utfpr.client.components;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-
 import com.edu.utfpr.client.ChatClient;
-import com.edu.utfpr.client.components.ChatRenderComponent;
-import com.edu.utfpr.client.components.ChatTabsComponent;
-import com.edu.utfpr.core.entities.User;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
 import java.rmi.RemoteException;
 
 public class NewGroupDialog {
@@ -54,39 +46,31 @@ public class NewGroupDialog {
         JButton createButton = new JButton("Criar");
         JButton cancelButton = new JButton("Cancelar");
 
-        createButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String groupName = nameField.getText();
-                Boolean radioRamdom = radio1.isSelected();
-                if (!groupName.trim().isEmpty()) {
-                    // Aqui você pode adicionar a lógica para criar o grupo
-                    try {
-                        chatClient.createChatGroup(groupName, chatClient.userName, radioRamdom);
-                    } catch (RemoteException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                        JOptionPane.showMessageDialog(dialog, "Erro ao criar grupo!", "Erro",
-                                JOptionPane.ERROR_MESSAGE);
-                        dialog.dispose();
-                    }
-                    System.out.println("Grupo " + groupName + " criado!");
-                    JOptionPane.showMessageDialog(dialog, "Grupo " + groupName + " criado!", "Sucesso",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    dialog.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(dialog, "O nome do grupo não pode estar vazio.", "Erro",
+        createButton.addActionListener(e -> {
+            String groupName = nameField.getText();
+            Boolean radioRamdom = radio1.isSelected();
+            if (!groupName.trim().isEmpty()) {
+                // Aqui você pode adicionar a lógica para criar o grupo
+                try {
+                    chatClient.createChatGroup(groupName, chatClient.userName, radioRamdom);
+                } catch (RemoteException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                    JOptionPane.showMessageDialog(dialog, "Erro ao criar grupo!", "Erro",
                             JOptionPane.ERROR_MESSAGE);
+                    dialog.dispose();
                 }
+                System.out.println("Grupo " + groupName + " criado!");
+                JOptionPane.showMessageDialog(dialog, "Grupo " + groupName + " criado!", "Sucesso",
+                        JOptionPane.INFORMATION_MESSAGE);
+                dialog.dispose();
+            } else {
+                JOptionPane.showMessageDialog(dialog, "O nome do grupo não pode estar vazio.", "Erro",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
+        cancelButton.addActionListener(e -> dialog.dispose());
 
         buttonPanel.add(createButton);
         buttonPanel.add(cancelButton);

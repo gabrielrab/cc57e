@@ -110,8 +110,8 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
     }
 
     @Override
-    public void registerUser(String userName, String password, String hostName, String clientServiceName)
-            throws RemoteException, UserAlreadyRegisteredException, MalformedURLException, NotBoundException {
+    public void registerUser(String userName, String password)
+            throws RemoteException, UserAlreadyRegisteredException {
         if (userCredentials.containsKey(userName)) {
             throw new UserAlreadyRegisteredException();
         }
@@ -150,7 +150,7 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
     }
 
     private void updateMyChatsList(User currentUser) {
-        List<Chat> myChats = new ArrayList<>();
+        List<Chat> myChats;
         for (User user : users) {
             try {
                 myChats = getMyChats(currentUser.getName());
@@ -163,46 +163,8 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
     private List<User> getUserList() {
         List<User> allUsers = new ArrayList<>(users.size());
-        for (User user : users) {
-            allUsers.add(user);
-        }
+        allUsers.addAll(users);
         return allUsers;
-    }
-
-    @Override
-    public void leaveGroup(User user, Chat chat) throws RemoteException {
-        boolean isAdmin = chat.admin == user;
-
-        if (!isAdmin) {
-            chat.members.remove(user);
-            updatePublicGroupList();
-        } else {
-            if (chat.exitAdminMethodRandom) {
-                if (chat.members.size() > 1) {
-                    chat.members.remove(user);
-                    chat.admin = chat.members.get(0);
-                    updatePublicGroupList();
-                } else {
-                    groups.remove(chat);
-                    updatePublicGroupList();
-                }
-            } else {
-                groups.remove(chat);
-                updatePublicGroupList();
-            }
-        }
-
-        for (User c : users) {
-            if (c.getName().equals(user.name)) {
-                System.out.println(user.name + " saiu do grupo");
-                System.out.println(new Date(System.currentTimeMillis()));
-                users.remove(c);
-                break;
-            }
-        }
-        if (!users.isEmpty()) {
-            updateUserList();
-        }
     }
 
     @Override
@@ -234,28 +196,6 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
         }
 
         return myChats;
-    }
-
-    @Override
-    public void createInviteGroup(User user, Chat chat) throws RemoteException {
-        chat.pendingUsers.add(user);
-    }
-
-    @Override
-    public void acceptInviteGroup(User user, Chat chat) throws RemoteException {
-
-        chat.pendingUsers.remove(user);
-        chat.members.add(user);
-    }
-
-    @Override
-    public List<User> getPendingUsersGroup(Chat chat) throws RemoteException {
-        return chat.pendingUsers;
-    }
-
-    @Override
-    public List<User> getMembersGroup(Chat chat) throws RemoteException {
-        return chat.members;
     }
 
     @Override

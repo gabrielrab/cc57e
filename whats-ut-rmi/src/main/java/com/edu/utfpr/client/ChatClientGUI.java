@@ -1,27 +1,19 @@
 package com.edu.utfpr.client;
 
-import javax.swing.*;
-
 import com.edu.utfpr.client.components.ChatRenderComponent;
 import com.edu.utfpr.client.components.ChatTabsComponent;
 import com.edu.utfpr.client.components.NewGroupDialog;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.rmi.RemoteException;
 
 public class ChatClientGUI extends JFrame {
-    private ChatTabsComponent chatTabsComponent;
-    private ChatRenderComponent chatRenderComponent;
-    protected JTextArea textArea, userArea;
-    protected JFrame frame;
-    protected JButton privateMsgButton, startButton, sendButton;
-    protected JPanel clientPanel, userPanel;
-    private JPanel inputPanel;
+    protected final JFrame frame;
+    private final ChatClient chatClient;
+    protected JButton sendButton;
     private JTextField textField;
-    private ChatClient chatClient;
 
     public ChatClientGUI(ChatClient chatClient) throws RemoteException {
         this.chatClient = chatClient;
@@ -31,9 +23,7 @@ public class ChatClientGUI extends JFrame {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if (chatClient != null) {
-                    // TODO: remover usuário da listagem de usuários online
-                }
+                // TODO: remover usuário da listagem de usuários online
                 System.exit(0);
             }
         });
@@ -60,26 +50,21 @@ public class ChatClientGUI extends JFrame {
         frame.setVisible(true);
     }
 
-    public JPanel createChatMessagesPanel() throws RemoteException {
-        chatRenderComponent = new ChatRenderComponent(chatClient);
-        return chatRenderComponent;
+    public JPanel createChatMessagesPanel() {
+        return new ChatRenderComponent(chatClient);
     }
 
     public JPanel createChatPanel() throws RemoteException {
-        chatTabsComponent = new ChatTabsComponent(chatClient);
 
-        return chatTabsComponent;
+        return new ChatTabsComponent(chatClient);
     }
 
-    public JButton createGroupButton() throws RemoteException {
+    public JButton createGroupButton() {
         sendButton = new JButton("+ Criar Novo Grupo");
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        sendButton.addActionListener(e -> {
 
-                NewGroupDialog DialogCreateGroup = new NewGroupDialog();
-                DialogCreateGroup.openCreateGroupDialog(chatClient);
-            }
+            NewGroupDialog DialogCreateGroup = new NewGroupDialog();
+            DialogCreateGroup.openCreateGroupDialog(chatClient);
         });
         sendButton.setEnabled(true);
 
@@ -87,19 +72,16 @@ public class ChatClientGUI extends JFrame {
     }
 
     public JPanel createSendMessageInput() {
-        inputPanel = new JPanel(new BorderLayout());
+        JPanel inputPanel = new JPanel(new BorderLayout());
         textField = new JTextField();
-        textField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String message = textField.getText();
-                if (!message.trim().isEmpty()) {
-                    try {
-                        chatClient.sendMessage(message);
-                        textField.setText("");
-                    } catch (RemoteException ex) {
-                        ex.printStackTrace();
-                    }
+        textField.addActionListener(e -> {
+            String message = textField.getText();
+            if (!message.trim().isEmpty()) {
+                try {
+                    chatClient.sendMessage(message);
+                    textField.setText("");
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
                 }
             }
         });

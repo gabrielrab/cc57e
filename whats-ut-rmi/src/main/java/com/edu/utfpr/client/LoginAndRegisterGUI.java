@@ -7,7 +7,6 @@ import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.Objects;
 
 public class LoginAndRegisterGUI extends JFrame {
@@ -65,7 +64,7 @@ public class LoginAndRegisterGUI extends JFrame {
         panel.add(Box.createRigidArea(new Dimension(0, 16)), constraints);
 
         JButton loginButton = new JButton("Entrar");
-        loginButton.addActionListener(this::loginButtonActionPerformed);
+        loginButton.addActionListener(e1 -> loginButtonActionPerformed());
         constraints.gridy = 7;
         constraints.gridx = 0;
         panel.add(loginButton, constraints);
@@ -75,7 +74,7 @@ public class LoginAndRegisterGUI extends JFrame {
         panel.add(Box.createRigidArea(new Dimension(0, 4)), constraints);
 
         JButton registerButton = new JButton("Registrar");
-        registerButton.addActionListener(this::registerButtonActionPerformed);
+        registerButton.addActionListener(e -> registerButtonActionPerformed());
         constraints.gridy = 9;
         constraints.gridx = 0;
         panel.add(registerButton, constraints);
@@ -92,7 +91,7 @@ public class LoginAndRegisterGUI extends JFrame {
         loginAndRegisterGUI.setVisible(true);
     }
 
-    private void loginButtonActionPerformed(ActionEvent e) {
+    private void loginButtonActionPerformed() {
         try {
             chatClient = new ChatClient(usernameField.getText());
             chatClient.login(usernameField.getText(), new String(passwordField.getPassword()));
@@ -106,8 +105,7 @@ public class LoginAndRegisterGUI extends JFrame {
         }
     }
 
-    private void registerButtonActionPerformed(ActionEvent e) {
-
+    private void registerButtonActionPerformed() {
         String userName = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
         password = password.trim();

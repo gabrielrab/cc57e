@@ -1,5 +1,9 @@
 package com.edu.utfpr.client.components;
 
+import com.edu.utfpr.client.ChatClient;
+import com.edu.utfpr.core.entities.Chat;
+import com.edu.utfpr.core.entities.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -8,21 +12,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.edu.utfpr.client.ChatClient;
-import com.edu.utfpr.core.entities.Chat;
-import com.edu.utfpr.core.entities.User;
-
 public class ChatTabsComponent extends JPanel {
+    private final ChatClient chatClient;
     private JTabbedPane tabbedPane;
-    private JPanel chatsPanel, usersPanel, groupsPanel;
-
-    private JList<Chat> myChatsList, groupsList;
+    private JList<Chat> myChatsList;
     private DefaultListModel<Chat> myChatsModel, groupsModel;
-
     private JList<User> allUsersList;
     private DefaultListModel<User> allUsersModel;
-
-    private ChatClient chatClient;
 
     public ChatTabsComponent(ChatClient chatClient) throws RemoteException {
         this.chatClient = chatClient;
@@ -38,9 +34,9 @@ public class ChatTabsComponent extends JPanel {
     private void initComponents(List<User> currentOnlineUsers, List<Chat> groups, List<Chat> myChats) {
         tabbedPane = new JTabbedPane();
 
-        setupMyChatsTab(myChats);
-        setupUsersTab(currentOnlineUsers);
-        setupGroupsTab(groups);
+        setupMyChatsTab();
+        setupUsersTab();
+        setupGroupsTab();
 
         add(tabbedPane);
 
@@ -48,7 +44,7 @@ public class ChatTabsComponent extends JPanel {
         updateLists(currentOnlineUsers, groups, myChats);
     }
 
-    private void setupMyChatsTab(List<Chat> myChats) {
+    private void setupMyChatsTab() {
         myChatsModel = new DefaultListModel<>();
         myChatsList = new JList<>(myChatsModel);
         myChatsList.setCellRenderer(createChatListsCellRenderer());
@@ -66,12 +62,12 @@ public class ChatTabsComponent extends JPanel {
                 }
             }
         });
-        chatsPanel = new JPanel(new BorderLayout());
+        JPanel chatsPanel = new JPanel(new BorderLayout());
         chatsPanel.add(new JScrollPane(myChatsList), BorderLayout.CENTER);
         tabbedPane.addTab("Meus Chats", chatsPanel);
     }
 
-    private void setupUsersTab(List<User> currentOnlineUsers) {
+    private void setupUsersTab() {
         allUsersModel = new DefaultListModel<>();
         allUsersList = new JList<>(allUsersModel);
         allUsersList.setCellRenderer(createUsersListsCellRenderer());
@@ -89,16 +85,16 @@ public class ChatTabsComponent extends JPanel {
                 }
             }
         });
-        usersPanel = new JPanel(new BorderLayout());
+        JPanel usersPanel = new JPanel(new BorderLayout());
         usersPanel.add(new JScrollPane(allUsersList), BorderLayout.CENTER);
         tabbedPane.addTab("Usuários online", usersPanel);
     }
 
-    private void setupGroupsTab(List<Chat> groups) {
+    private void setupGroupsTab() {
         groupsModel = new DefaultListModel<>();
-        groupsList = new JList<>(groupsModel);
+        JList<Chat> groupsList = new JList<>(groupsModel);
         groupsList.setCellRenderer(createChatListsCellRenderer());
-        groupsPanel = new JPanel(new BorderLayout());
+        JPanel groupsPanel = new JPanel(new BorderLayout());
         groupsPanel.add(new JScrollPane(groupsList), BorderLayout.CENTER);
         tabbedPane.addTab("Grupos públicos", groupsPanel);
     }
@@ -107,7 +103,7 @@ public class ChatTabsComponent extends JPanel {
         return new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                    boolean cellHasFocus) {
+                                                          boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 setText(((User) value).getName());
                 return this;
@@ -119,7 +115,7 @@ public class ChatTabsComponent extends JPanel {
         return new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                    boolean cellHasFocus) {
+                                                          boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 setText(((Chat) value).getName());
                 return this;

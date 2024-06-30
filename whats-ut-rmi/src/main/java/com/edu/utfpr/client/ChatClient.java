@@ -30,7 +30,7 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
     protected IChatServer server;
 
     public ChatClient(String userName)
-            throws RemoteException, MalformedURLException, NotBoundException, UserAlreadyRegisteredException {
+            throws RemoteException, MalformedURLException, NotBoundException {
         super();
         clientServiceName = "ClientListenService_" + userName;
 
@@ -40,8 +40,8 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
     }
 
     public void register(String userName, String password)
-            throws RemoteException, UserAlreadyRegisteredException, MalformedURLException, NotBoundException {
-        server.registerUser(userName, password, hostName, clientServiceName);
+            throws RemoteException, UserAlreadyRegisteredException {
+        server.registerUser(userName, password);
     }
 
     public void login(String userName, String password)
@@ -119,13 +119,6 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
     public void updateChatList(List<Chat> myChats) throws RemoteException {
         for (Consumer<List<Chat>> listener : changeMyChatsListListeners) {
             listener.accept(myChats);
-        }
-    }
-
-    @Override
-    public void updateCurrentChat(Chat chat) throws RemoteException {
-        for (Consumer<Chat> listener : changeCurrentChatListeners) {
-            listener.accept(chat);
         }
     }
 
