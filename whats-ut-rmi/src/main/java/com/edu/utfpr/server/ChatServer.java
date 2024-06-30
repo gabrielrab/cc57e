@@ -75,11 +75,6 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
         }
 
         userCredentials.put(userName, password);
-
-        IChatClient nextClient = (IChatClient) Naming.lookup("rmi://" + hostName + "/" + clientServiceName);
-        users.addElement(new Usuario(userName, nextClient));
-        sendToAll("[Servidor] : " + userName + " entrou no grupo.\n");
-        updateUserList();
     }
 
     private void updateUserList() {

@@ -83,9 +83,7 @@ public class LoginAndRegisterGUI extends JFrame {
 
     private void loginButtonActionPerformed(ActionEvent e) {
         try {
-            if (chatClient == null) {
-                chatClient = new ChatClient(usernameField.getText());
-            }
+            chatClient = new ChatClient(usernameField.getText());
             chatClient.login(usernameField.getText(), new String(passwordField.getPassword()));
 
             new ChatClientGUI(chatClient);
@@ -101,9 +99,7 @@ public class LoginAndRegisterGUI extends JFrame {
 
     private void registerButtonActionPerformed(ActionEvent e) {
         try {
-            if (chatClient == null) {
-                chatClient = new ChatClient(usernameField.getText());
-            }
+            chatClient = new ChatClient(usernameField.getText());
             chatClient.register(usernameField.getText(), new String(passwordField.getPassword()));
 
             JOptionPane.showMessageDialog(this, "Usuário registrado com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
