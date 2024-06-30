@@ -34,6 +34,7 @@ public class NewGroupDialog {
         JRadioButton radio1 = new JRadioButton("Quando admin sair escolher outra pessoa para admin");
 
         JRadioButton radio2 = new JRadioButton("Quando admin sair excluir grupo");
+        radio2.setSelected(true);
 
         ButtonGroup group = new ButtonGroup();
         group.add(radio1);
@@ -58,8 +59,7 @@ public class NewGroupDialog {
             public void actionPerformed(ActionEvent e) {
                 String groupName = nameField.getText();
                 Boolean radioRamdom = radio1.isSelected();
-                Boolean radioDelete = radio1.isSelected();
-                if (!groupName.trim().isEmpty() && (radioRamdom || radioDelete )) {
+                if (!groupName.trim().isEmpty()) {
                     // Aqui você pode adicionar a lógica para criar o grupo
                     try {
                         chatClient.createChatGroup(groupName, chatClient.userName, radioRamdom);
