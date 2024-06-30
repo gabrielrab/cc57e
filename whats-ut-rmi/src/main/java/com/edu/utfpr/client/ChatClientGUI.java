@@ -1,14 +1,16 @@
 package com.edu.utfpr.client;
 
 import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.rmi.RemoteException;
 
 public class ChatClientGUI extends JFrame implements ActionListener {
+    private final Font meiryoFont = new Font("Meiryo", Font.PLAIN, 14);
+    private final Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);//top,r,b,l
     protected JTextArea textArea, userArea;
     protected JFrame frame;
     protected JButton privateMsgButton, startButton, sendButton;
@@ -16,25 +18,21 @@ public class ChatClientGUI extends JFrame implements ActionListener {
     private JPanel textPanel, inputPanel;
     private JTextField textField;
     private String name, message;
-    private Font meiryoFont = new Font("Meiryo", Font.PLAIN, 14);
-    private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);//top,r,b,l
     private ChatClient chatClient;
     private JList<String> list;
     private DefaultListModel<String> listModel;
 
-    public ChatClientGUI() {
+    public ChatClientGUI(ChatClient chatClient) {
         frame = new JFrame("WhatsUI");
 
-        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-
                 if (chatClient != null) {
                     try {
-                        sendMessage("Falou galerinha, estou saindo");
                         chatClient.server.leaveChat(name);
                     } catch (RemoteException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 }
                 System.exit(0);
@@ -59,19 +57,9 @@ public class ChatClientGUI extends JFrame implements ActionListener {
 
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
-    }
 
-    public static void main(String[] args) {
-        try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        new ChatClientGUI();
+        chatClient.addChangeUserListListener(this::onChangeUserList);
+        chatClient.addOnReceiveMessageListener(this::onReceiveMessage);
     }
 
     public JPanel getTextPanel() {
@@ -164,22 +152,6 @@ public class ChatClientGUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            if (e.getSource() == startButton) {
-                name = textField.getText();
-                if (!name.isEmpty()) {
-                    frame.setTitle("Console de " + name);
-                    textField.setText("");
-                    textArea.append("usuário : " + name + " conectando no chat...\n");
-                    getConnected(name);
-                    if (chatClient.isConnected) {
-                        startButton.setEnabled(false);
-                        sendButton.setEnabled(true);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Digite seu nome para iniciar");
-                }
-            }
-
             if (e.getSource() == sendButton) {
                 message = textField.getText();
                 textField.setText("");
@@ -213,14 +185,18 @@ public class ChatClientGUI extends JFrame implements ActionListener {
         chatClient.server.sendPM(privateList, privateMessage);
     }
 
-    private void getConnected(String userName) throws RemoteException {
-        String cleanedUserName = userName.replaceAll("\\s+", "_");
-        cleanedUserName = userName.replaceAll("\\W+", "_");
-        try {
-            chatClient = new ChatClient(this, cleanedUserName);
-            chatClient.startClient();
-        } catch (RemoteException e) {
-            e.printStackTrace();
+    private void onChangeUserList(String[] currentUsers) {
+        if (currentUsers.length < 2) {
+            privateMsgButton.setEnabled(false);
         }
+        userPanel.remove(clientPanel);
+        setClientPanel(currentUsers);
+        clientPanel.repaint();
+        clientPanel.revalidate();
+    }
+
+    private void onReceiveMessage(String message) {
+        textArea.append(message);
+        textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 }

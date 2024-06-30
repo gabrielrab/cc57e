@@ -1,72 +1,63 @@
 package com.edu.utfpr.client;
 
+import com.edu.utfpr.core.exceptions.InvalidUserOrPasswordException;
+import com.edu.utfpr.core.exceptions.UserAlreadyRegisteredException;
 import com.edu.utfpr.server.IChatServer;
 
-import javax.swing.*;
 import java.net.MalformedURLException;
-import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
-public class ChatClient extends UnicastRemoteObject implements IChatClient{
-    ChatClientGUI chatGUI;
+public class ChatClient extends UnicastRemoteObject implements IChatClient {
+    private final String hostName = "localhost";
+    private final List<Consumer<String[]>> changeUserListListeners = new ArrayList<>();
+    private final List<Consumer<String>> onReceiveMessageListeners = new ArrayList<>();
     private final String clientServiceName;
-    private final String name;
     protected IChatServer server;
     protected boolean isConnected = false;
 
-    public ChatClient(ChatClientGUI aChatGUI, String userName) throws RemoteException {
+    public ChatClient(String userName) throws RemoteException, MalformedURLException, NotBoundException, UserAlreadyRegisteredException {
         super();
-        this.chatGUI = aChatGUI;
-        this.name = userName;
-        this.clientServiceName = "ClientListenService_" + userName;
+        clientServiceName = "ClientListenService_" + userName;
+
+        Naming.rebind("rmi://" + hostName + "/" + clientServiceName, this);
+        String serverServiceName = "GroupChatService";
+        server = (IChatServer) Naming.lookup("rmi://" + hostName + "/" + serverServiceName);
     }
 
-    public void startClient() throws RemoteException {
-        String hostName = "localhost";
-        String[] details = {name, hostName, clientServiceName};
-
-        try {
-            Naming.rebind("rmi://" + hostName + "/" + clientServiceName, this);
-            String serviceName = "GroupChatService";
-            server = ( IChatServer )Naming.lookup("rmi://" + hostName + "/" + serviceName);
-        }
-        catch (ConnectException e) {
-            JOptionPane.showMessageDialog(
-                    chatGUI.frame, " servidor parece estar indisponível\nPor favor tente novamente mais tarde",
-                    "Problema de conexão", JOptionPane.ERROR_MESSAGE);
-            isConnected = false;
-        }
-        catch(NotBoundException | MalformedURLException me){
-            isConnected = false;
-        }
-        if(!isConnected){
-            registerWithServer(details);
-        }
+    public void register(String userName, String password) throws RemoteException, UserAlreadyRegisteredException, MalformedURLException, NotBoundException {
+        server.registerUser(userName, password, hostName, clientServiceName);
     }
 
-    public void registerWithServer(String[] details) throws RemoteException {
-            server.passIDentity(this.ref);
-            server.registerListener(details);
+    public void login(String userName, String password) throws RemoteException, MalformedURLException, NotBoundException, InvalidUserOrPasswordException {
+        server.login(userName, password, hostName, clientServiceName);
     }
 
     @Override
-    public void messageFromServer(String message) throws RemoteException {
-        System.out.println( message );
-        chatGUI.textArea.append( message );
-        chatGUI.textArea.setCaretPosition(chatGUI.textArea.getDocument().getLength());
+    public void receiveMessageFromServer(String message) throws RemoteException {
+        for (Consumer<String> listener : onReceiveMessageListeners) {
+            listener.accept(message);
+        }
     }
 
     @Override
     public void updateUserList(String[] currentUsers) throws RemoteException {
-        if(currentUsers.length < 2){
-            chatGUI.privateMsgButton.setEnabled(false);
+        for (Consumer<String[]> listener : changeUserListListeners) {
+            listener.accept(currentUsers);
         }
-        chatGUI.userPanel.remove(chatGUI.clientPanel);
-        chatGUI.setClientPanel(currentUsers);
-        chatGUI.clientPanel.repaint();
-        chatGUI.clientPanel.revalidate();
     }
+
+    public void addChangeUserListListener(Consumer<String[]> listener) {
+        changeUserListListeners.add(listener);
+    }
+
+    public void addOnReceiveMessageListener(Consumer<String> listener) {
+        onReceiveMessageListeners.add(listener);
+    }
+
 }
