@@ -1,13 +1,10 @@
 package com.edu.utfpr.client.components;
 
-import java.awt.BorderLayout;
-import java.rmi.RemoteException;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
 import com.edu.utfpr.client.ChatClient;
+
+import javax.swing.*;
+import java.awt.*;
+import java.rmi.RemoteException;
 
 public class ChatRenderComponent extends JPanel {
     private JTextArea textArea;
@@ -19,8 +16,6 @@ public class ChatRenderComponent extends JPanel {
         chatClient.addChangeCurrentChatListener(chat -> {
             textArea.setText("");
             if (chat != null) {
-                textArea.append("Chat: " + chat.getName() + "\n");
-                textArea.append("Mensagens:\n");
                 chat.getMessages().forEach(message -> {
                     textArea.append(message.getSender().getName() + ": " + message.getContent() + "\n");
                 });
@@ -28,7 +23,7 @@ public class ChatRenderComponent extends JPanel {
         });
 
         chatClient.addOnReceiveMessageListener(message -> {
-            textArea.append(message + "\n");
+            textArea.append(message.getSender().getName() + ": " + message.getContent() + "\n");
         });
     }
 

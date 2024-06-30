@@ -1,6 +1,5 @@
 package com.edu.utfpr.server;
 
-import com.edu.utfpr.client.ChatClient;
 import com.edu.utfpr.client.IChatClient;
 import com.edu.utfpr.core.entities.Chat;
 import com.edu.utfpr.core.entities.Messages;
@@ -13,13 +12,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.UUID;
+import java.util.*;
 
 public class ChatServer extends UnicastRemoteObject implements IChatServer {
     private final Vector<User> users;
@@ -72,8 +65,8 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
                 chatName,
                 creator,
                 creator,
-                exitAdminMethodRandom,
-                true);
+                true,
+                exitAdminMethodRandom);
         groups.add(chat);
         updatePublicGroupList();
         updateMyChatsList(creator);
@@ -178,20 +171,15 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
     @Override
     public void leaveGroup(User user, Chat chat) throws RemoteException {
-        boolean isAdmin = false;
-        if (chat.admin == user) {
-            isAdmin = true;
-        }
+        boolean isAdmin = chat.admin == user;
 
         if (!isAdmin) {
-            int indexUser = chat.members.indexOf(user);
-            chat.members.remove(indexUser);
+            chat.members.remove(user);
             updatePublicGroupList();
         } else {
             if (chat.exitAdminMethodRandom) {
                 if (chat.members.size() > 1) {
-                    int indexUser = chat.members.indexOf(user);
-                    chat.members.remove(indexUser);
+                    chat.members.remove(user);
                     chat.admin = chat.members.get(0);
                     updatePublicGroupList();
                 } else {
@@ -255,9 +243,8 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
     @Override
     public void acceptInviteGroup(User user, Chat chat) throws RemoteException {
-        int indexUser = chat.pendingUsers.indexOf(user);
 
-        chat.pendingUsers.remove(indexUser);
+        chat.pendingUsers.remove(user);
         chat.members.add(user);
     }
 
@@ -278,15 +265,18 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
         if (chat.isGroup) {
             Chat group = groups.get(groups.indexOf(chat));
-            newMessage = new Messages(group, userFound, message);
+            newMessage = new Messages(userFound, message);
             group.messages.add(newMessage);
         } else {
             Chat privateGroup = privateGroups.stream()
                     .filter(other -> chat.getChatId().equals(other.getChatId()))
                     .findFirst()
                     .orElse(null);
-            newMessage = new Messages(privateGroup, userFound, message);
-            privateGroup.messages.add(newMessage);
+            newMessage = new Messages(userFound, message);
+
+            if (privateGroup != null) {
+                privateGroup.messages.add(newMessage);
+            }
         }
 
         for (User groupUser : chat.members) {

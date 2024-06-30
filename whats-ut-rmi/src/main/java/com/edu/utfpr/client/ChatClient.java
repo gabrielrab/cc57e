@@ -23,7 +23,7 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
     private final List<Consumer<List<Chat>>> changeGroupListListeners = new ArrayList<>();
     private final List<Consumer<List<Chat>>> changeMyChatsListListeners = new ArrayList<>();
     private final List<Consumer<Chat>> changeCurrentChatListeners = new ArrayList<>();
-    private final List<Consumer<String>> onReceiveMessageListeners = new ArrayList<>();
+    private final List<Consumer<Messages>> onReceiveMessageListeners = new ArrayList<>();
     private final String clientServiceName;
     public Chat currentChat;
     public String userName;
@@ -93,7 +93,7 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
         changeMyChatsListListeners.add(listener);
     }
 
-    public void addOnReceiveMessageListener(Consumer<String> listener) {
+    public void addOnReceiveMessageListener(Consumer<Messages> listener) {
         onReceiveMessageListeners.add(listener);
     }
 
@@ -132,8 +132,8 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
     @Override
     public void receiveMessage(Messages message) throws RemoteException {
         currentChat.messages.add(message);
-        for (Consumer<String> listener : onReceiveMessageListeners) {
-            listener.accept(message.content);
+        for (Consumer<Messages> listener : onReceiveMessageListeners) {
+            listener.accept(message);
         }
     }
 
