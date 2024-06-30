@@ -28,7 +28,8 @@ public class LoginAndRegisterGUI extends JFrame {
 
         ImageIcon logoIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/logo.png")));
         Image image = logoIcon.getImage();
-        Image resizedImage = image.getScaledInstance(image.getWidth(null) / 2, image.getHeight(null) / 2, java.awt.Image.SCALE_SMOOTH);
+        Image resizedImage = image.getScaledInstance(image.getWidth(null) / 2, image.getHeight(null) / 2,
+                java.awt.Image.SCALE_SMOOTH);
         logoIcon = new ImageIcon(resizedImage);
         JLabel logoLabel = new JLabel();
         logoLabel.setIcon(logoIcon);
@@ -100,7 +101,8 @@ public class LoginAndRegisterGUI extends JFrame {
             chatClient = new ChatClient(usernameField.getText());
             chatClient.register(usernameField.getText(), new String(passwordField.getPassword()));
 
-            JOptionPane.showMessageDialog(this, "Usuário registrado com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Usuário registrado com sucesso", "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (UserAlreadyRegisteredException ex) {
             JOptionPane.showMessageDialog(this, "Usuário já registrado", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
