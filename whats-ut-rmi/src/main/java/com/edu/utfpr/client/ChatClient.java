@@ -18,6 +18,7 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
     private final List<Consumer<String[]>> changeUserListListeners = new ArrayList<>();
     private final List<Consumer<String>> onReceiveMessageListeners = new ArrayList<>();
     private final String clientServiceName;
+    public String userName;
     protected IChatServer server;
     protected boolean isConnected = false;
 
@@ -36,6 +37,7 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
 
     public void login(String userName, String password) throws RemoteException, MalformedURLException, NotBoundException, InvalidUserOrPasswordException {
         server.login(userName, password, hostName, clientServiceName);
+        this.userName = userName;
     }
 
     @Override

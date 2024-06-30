@@ -88,8 +88,6 @@ public class LoginAndRegisterGUI extends JFrame {
 
             new ChatClientGUI(chatClient);
             dispose();
-        } catch (UserAlreadyRegisteredException ex) {
-            JOptionPane.showMessageDialog(this, "Usuário não registrado", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (InvalidUserOrPasswordException ex) {
             JOptionPane.showMessageDialog(this, "Usuário ou senha inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
@@ -108,6 +106,5 @@ public class LoginAndRegisterGUI extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao registrar usuário", "Erro", JOptionPane.ERROR_MESSAGE);
         }
-
     }
 }
