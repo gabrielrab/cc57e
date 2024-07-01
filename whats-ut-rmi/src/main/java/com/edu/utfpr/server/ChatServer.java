@@ -8,6 +8,7 @@ import com.edu.utfpr.core.exceptions.InvalidUserOrPasswordException;
 import com.edu.utfpr.core.exceptions.UserAlreadyRegisteredException;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -18,6 +19,7 @@ import java.util.*;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class ChatServer extends UnicastRemoteObject implements IChatServer {
     private final Vector<User> users;
@@ -271,10 +273,13 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
                 case "/members":
                     JDialog dialog = new JDialog();
                     dialog.setTitle("Lista de membros do grupo "+ chat.name);
-                    for (User u : chat.members) {
-                        JLabel uName = new JLabel("User "+ u.name);
-                        dialog.add(uName);
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new GridLayout());
+                    for (User member : chat.members) {
+                        JLabel memberName = new JLabel("User "+ member.name);
+                        panel.add(memberName);
                     }
+                    dialog.add(panel, BorderLayout.CENTER);
                     dialog.setVisible(true);
                     dialog.setLayout(new BorderLayout());
                     dialog.setAlwaysOnTop(true);
