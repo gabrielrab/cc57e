@@ -33,6 +33,8 @@ public interface IChatServer extends Remote {
 
     void acceptInviteGroup(String userName, Chat chat) throws RemoteException;
 
+    void removeUserGroup(String userName, Chat chatParam) throws RemoteException;
+
     void leaveGroup(String UserName, Chat chat) throws RemoteException;
 
     List<User> getCurrentUsers() throws RemoteException;
