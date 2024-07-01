@@ -135,4 +135,9 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
         return currentChat.chatId;
     }
 
+    @Override
+    public void sendInviteAdmin(String userName, Chat chat) throws RemoteException{
+        server.createInviteGroup(userName, chat);
+    }
+
 }

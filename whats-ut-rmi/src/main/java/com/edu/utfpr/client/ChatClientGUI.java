@@ -77,12 +77,22 @@ public class ChatClientGUI extends JFrame {
         textField.addActionListener(e -> {
             String message = textField.getText();
             if (!message.trim().isEmpty()) {
-                try {
-                    chatClient.sendMessage(message);
+                if (message.equals("/help")) {
+                    JOptionPane.showMessageDialog(inputPanel, 
+                "Comandos de usuário: \n /members -> Ver lista de membros \n /exit -> Sair do grupo  \n \n Comandos de admin: \n /invites -> exibe a lista de invites do grupo \n /accept {UserName} -> Adiciona o usuário no grupo \n /ban {UserName} -> Remove o usuário do grupo", "Lista de comandos",
+                    JOptionPane.INFORMATION_MESSAGE);
                     textField.setText("");
-                } catch (RemoteException ex) {
-                    ex.printStackTrace();
                 }
+                else{
+                    try {
+                        chatClient.sendMessage(message);
+                        textField.setText("");  
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    }
+
+                }
+     
             }
         });
         inputPanel.add(textField);

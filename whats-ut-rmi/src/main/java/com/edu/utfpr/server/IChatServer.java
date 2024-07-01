@@ -27,6 +27,12 @@ public interface IChatServer extends Remote {
             throws RemoteException, MalformedURLException, NotBoundException,
             InvalidUserOrPasswordException;
 
+    void createInviteGroup(String userName, Chat chat) throws RemoteException;
+
+    void acceptInviteGroup(String userName, Chat chat) throws RemoteException;
+
+    void leaveGroup(String UserName, Chat chat) throws RemoteException;
+
     List<User> getCurrentUsers() throws RemoteException;
 
     List<Chat> getAllGroups() throws RemoteException;

@@ -94,6 +94,23 @@ public class ChatTabsComponent extends JPanel {
         groupsModel = new DefaultListModel<>();
         JList<Chat> groupsList = new JList<>(groupsModel);
         groupsList.setCellRenderer(createChatListsCellRenderer());
+        groupsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
+                    Chat chat = groupsList.getSelectedValue();
+                    try {
+                        chatClient.sendInviteAdmin(chatClient.userName, chat);
+                        JOptionPane.showMessageDialog(null, "Seu pedido para entrar no grupo foi enviado. Aguarde até que o administrador aceite sua entrada.", "Pedido envidado",
+                        JOptionPane.INFORMATION_MESSAGE);
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Erro ao enviar pedido.", "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
         JPanel groupsPanel = new JPanel(new BorderLayout());
         groupsPanel.add(new JScrollPane(groupsList), BorderLayout.CENTER);
         tabbedPane.addTab("Grupos públicos", groupsPanel);

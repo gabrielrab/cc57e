@@ -28,14 +28,17 @@ public class Chat implements Serializable {
 
     public List<Messages> messages = new ArrayList<>();
 
-    public Chat(UUID chatId, String name, User admin, User created_by, Boolean isGroup, Boolean exitAdminMethodRandom) {
+    public Chat(UUID chatId, String name, User _admin, User created_by, Boolean isGroup, Boolean exitAdminMethodRandom) {
         this.chatId = chatId;
         this.name = name;
-        this.admin = admin;
+        this.admin = _admin;
         this.created_by = created_by;
         this.isGroup = isGroup;
         this.exitAdminMethodRandom = exitAdminMethodRandom;
 
-        this.members.add(admin);
+        Messages First = new Messages(created_by, "Utilize o comando /help para listar os comandos possiveis no chat.");
+
+        this.messages.add(First);
+        this.members.add(_admin);
     }
 }

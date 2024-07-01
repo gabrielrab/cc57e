@@ -19,4 +19,6 @@ public interface IChatClient extends Remote {
     void updateChatList(List<Chat> MyChats) throws RemoteException;
 
     void receiveMessage(Messages message) throws RemoteException;
+
+    void sendInviteAdmin(String userName, Chat chat) throws RemoteException;
 }

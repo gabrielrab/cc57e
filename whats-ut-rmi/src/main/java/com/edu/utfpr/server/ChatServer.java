@@ -7,12 +7,17 @@ import com.edu.utfpr.core.entities.User;
 import com.edu.utfpr.core.exceptions.InvalidUserOrPasswordException;
 import com.edu.utfpr.core.exceptions.UserAlreadyRegisteredException;
 
+import java.awt.BorderLayout;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class ChatServer extends UnicastRemoteObject implements IChatServer {
     private final Vector<User> users;
@@ -72,6 +77,32 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
         updateMyChatsList(creator);
     }
 
+
+    @Override
+    public void createInviteGroup(String userName, Chat chat) throws RemoteException {
+        User userParam = users.stream().filter(user -> user.getName().equals(userName)).findFirst().orElse(null);
+        Boolean hasInvite = chat.pendingUsers.contains(userParam);
+        Boolean isIn = chat.members.contains(userParam);
+        if (!hasInvite && !isIn) {
+            chat.pendingUsers.add(userParam);
+        }
+        System.err.println("Lista de pedidos" + chat.pendingUsers);
+    }
+
+    @Override
+    public void acceptInviteGroup(String userName, Chat chat) throws RemoteException {
+
+        User userParam = users.stream().filter(user -> user.getName().equals(userName)).findFirst().orElse(null);
+        int indexUser = chat.pendingUsers.indexOf(userParam);
+
+        chat.pendingUsers.remove(indexUser);
+        chat.members.add(userParam);
+
+        updatePublicGroupList();
+        updateMyChatsList(userParam);
+        
+    }
+
     @Override
     public void createPrivateChat(String user1, String user2) throws RemoteException {
         UUID guid = UUID.randomUUID();
@@ -95,6 +126,38 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
         updateMyChatsList(currentUser);
         updateMyChatsList(destinationUser);
+    }
+
+    @Override
+    public void leaveGroup(String UserName, Chat chat) throws RemoteException {
+
+        User currentUser = users.stream().filter(user -> user.getName().equals(UserName)).findFirst().orElse(null);
+
+        boolean isAdmin = false;
+        if (chat.admin == currentUser) {
+            isAdmin = true;
+        }
+
+        if (!isAdmin) {
+            int indexUser = chat.members.indexOf(currentUser);
+            chat.members.remove(indexUser);
+            updatePublicGroupList();
+        } else {
+            if (chat.exitAdminMethodRandom) {
+                if (chat.members.size() > 1) {
+                    int indexUser = chat.members.indexOf(currentUser);
+                    chat.members.remove(indexUser);
+                    chat.admin = chat.members.get(0);
+                    updatePublicGroupList();
+                } else {
+                    groups.remove(chat);
+                    updatePublicGroupList();
+                }
+            } else {
+                groups.remove(chat);
+                updatePublicGroupList();
+            }
+        }
     }
 
     @Override
@@ -204,9 +267,27 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
         Messages newMessage;
 
         if (chat.isGroup) {
-            Chat group = groups.get(groups.indexOf(chat));
-            newMessage = new Messages(userFound, message);
-            group.messages.add(newMessage);
+            switch (message) {
+                case "/members":
+                    JDialog dialog = new JDialog();
+                    dialog.setTitle("Lista de membros do grupo "+ chat.name);
+                    for (User u : chat.members) {
+                        JLabel uName = new JLabel("User "+ u.name);
+                        dialog.add(uName);
+                    }
+                    dialog.setVisible(true);
+                    dialog.setLayout(new BorderLayout());
+                    dialog.setAlwaysOnTop(true);
+                    newMessage = null;
+                break;
+            
+                default:
+                    Chat group = groups.get(groups.indexOf(chat));
+                    newMessage = new Messages(userFound, message);
+                    group.messages.add(newMessage);
+                break;
+            }
+            
         } else {
             Chat privateGroup = privateGroups.stream()
                     .filter(other -> chat.getChatId().equals(other.getChatId()))
@@ -221,7 +302,7 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
         for (User groupUser : chat.members) {
             if (groupUser.getClient() != null) {
-                if (groupUser.getClient().getCurrentChatId().equals(chat.chatId)) {
+                if (groupUser.getClient().getCurrentChatId().equals(chat.chatId ) && newMessage != null) {
                     groupUser.getClient().receiveMessage(newMessage);
                 }
             }
