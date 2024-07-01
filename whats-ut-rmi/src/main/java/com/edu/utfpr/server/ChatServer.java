@@ -71,18 +71,17 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
         UUID guid = UUID.randomUUID();
 
         Chat chat = new Chat(
-            guid,
-            chatName,
-            creator,
-            creator,
-            true,
-            exitAdminMethodRandom);
+                guid,
+                chatName,
+                creator,
+                creator,
+                true,
+                exitAdminMethodRandom);
 
         groups.add(chat);
         updatePublicGroupList();
         updateMyChatsList(creator);
     }
-
 
     @Override
     public void createInviteGroup(String userName, Chat chatParam) throws RemoteException {
@@ -103,19 +102,20 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
     public void acceptInviteGroup(String userName, Chat chatParam) throws RemoteException {
 
         Chat chat = groups.stream().filter(chats -> chats.getName().equals(chatParam.name)).findFirst().orElse(null);
-        User userParam = chat.pendingUsers.stream().filter(user -> user.getName().equals(userName)).findFirst().orElse(null);
+        User userParam = chat.pendingUsers.stream().filter(user -> user.getName().equals(userName)).findFirst()
+                .orElse(null);
         int indexUser = chat.pendingUsers.indexOf(userParam);
 
         if (userParam != null) {
             chat.pendingUsers.remove(indexUser);
             chat.members.add(userParam);
-    
+
             Integer indexChat = groups.indexOf(chat);
             groups.set(indexChat, chat);
-    
+
             updatePublicGroupList();
             updateMyChatsList(userParam);
-        } 
+        }
     }
 
     @Override
@@ -127,13 +127,13 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
         if (userParam != null) {
             chat.members.remove(indexUser);
-    
+
             Integer indexChat = groups.indexOf(chat);
             groups.set(indexChat, chat);
-    
+
             updatePublicGroupList();
             updateMyChatsList(userParam);
-        } 
+        }
     }
 
     @Override
@@ -189,7 +189,7 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
                     chat.admin = chat.members.get(0);
                     newMessage = new Messages(currentUser, "Saiu do grupo!");
                     chat.messages.add(newMessage);
-                    newMessage2 = new Messages(chat.admin,  chat.admin.name+" agora é o admin do grupo!");
+                    newMessage2 = new Messages(chat.admin, chat.admin.name + " agora é o admin do grupo!");
                     chat.messages.add(newMessage2);
                     updatePublicGroupList();
                     updateMyChatsList(currentUser);
@@ -207,10 +207,10 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
         for (User groupUser : chat.members) {
             if (groupUser.getClient() != null) {
-                if (groupUser.getClient().getCurrentChatId().equals(chat.chatId ) && newMessage != null) {
+                if (groupUser.getClient().getCurrentChatId().equals(chat.chatId) && newMessage != null) {
                     groupUser.getClient().receiveMessage(newMessage);
                 }
-                if (groupUser.getClient().getCurrentChatId().equals(chat.chatId ) && newMessage2 != null) {
+                if (groupUser.getClient().getCurrentChatId().equals(chat.chatId) && newMessage2 != null) {
                     groupUser.getClient().receiveMessage(newMessage2);
                 }
             }
@@ -271,12 +271,12 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
     private void updateMyChatsList(User currentUser) {
         List<Chat> myChats;
-            try {
-                myChats = getMyChats(currentUser.getName());
-                currentUser.getClient().updateChatList(myChats);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+        try {
+            myChats = getMyChats(currentUser.getName());
+            currentUser.getClient().updateChatList(myChats);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private List<User> getUserList() {
@@ -326,72 +326,55 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
             switch (message) {
                 case "/members":
                     JDialog dialog = new JDialog((Frame) null, "Criar Novo Grupo", true);
-                    dialog.setTitle("Lista de membros - "+ chat.name);
+                    dialog.setTitle("Lista de membros - " + chat.name);
                     dialog.setAlwaysOnTop(true);
-                    dialog.setSize(200 , 400);
+                    dialog.setSize(200, 400);
                     JPanel panel = new JPanel();
                     panel.setLayout(new GridLayout());
                     for (User member : chat.members) {
-                        if (member.equals(chat.admin)) {
-                            JLabel memberName = new JLabel("Admin: "+ member.name+"; ");
-                            panel.add(memberName);
-                        }
-                        else{
-                            JLabel memberName = new JLabel("User: "+ member.name+"; ");
-                            panel.add(memberName);
-                        }
-                        
+                        JLabel memberName = new JLabel(member.equals(chat.admin) ? "Admin: " : "User: ");
+                        memberName.setText(memberName.getText() + member.name + "; ");
+                        panel.add(memberName);
                     }
                     dialog.add(panel, BorderLayout.NORTH);
                     dialog.setLocationRelativeTo(null);
                     dialog.setVisible(true);
-                    dialog.setLayout(new BorderLayout());
                     newMessage = null;
-                break;
+                    break;
 
                 case "/invites":
-
                     if (userFound.equals(chat.admin)) {
                         JDialog dialogInvites = new JDialog((Frame) null, "Criar Novo Grupo", true);
-                        dialogInvites.setTitle("Lista de pedidos - "+ chat.name);
+                        dialogInvites.setTitle("Lista de pedidos - " + chat.name);
                         dialogInvites.setAlwaysOnTop(true);
-                        dialogInvites.setSize(200 , 400);
+                        dialogInvites.setSize(200, 400);
                         JPanel panelInvites = new JPanel();
-
                         panelInvites.setLayout(new GridLayout());
                         GridBagConstraints constraints = new GridBagConstraints();
                         constraints.fill = GridBagConstraints.HORIZONTAL;
-
                         constraints.gridwidth = 2;
                         constraints.gridx = 0;
                         constraints.gridy = 0;
-                        Integer i = 0;
                         for (User member : chat.pendingUsers) {
-                            JLabel memberName = new JLabel("Username: "+ member.name+"; ");
-                            panelInvites.add(memberName,constraints);
-                            i++;
-                            constraints.gridx = 0;
-                            constraints.gridy = i; 
+                            JLabel memberName = new JLabel("Username: " + member.name + "; ");
+                            panelInvites.add(memberName, constraints);
+                            constraints.gridy++;
                         }
                         dialogInvites.add(panelInvites, BorderLayout.NORTH);
                         dialogInvites.setLocationRelativeTo(null);
                         dialogInvites.setVisible(true);
-                        dialogInvites.setLayout(new BorderLayout());
                         newMessage = null;
-                    }
-                    else{
-                         
+                    } else {
                         newMessage = new Messages(userFound, message);
                         chat.messages.add(newMessage);
                     }
-
-                break;
+                    break;
 
                 case "/exit":
                     JDialog dialogExit = new JDialog((Frame) null, true);
-                    dialogExit.setTitle("Sair do grupo "+ chat.name+" ?");
+                    dialogExit.setTitle("Sair do grupo " + chat.name + " ?");
                     dialogExit.setAlwaysOnTop(true);
-                    dialogExit.setSize(300 , 300);
+                    dialogExit.setSize(300, 300);
                     JPanel panelExit = new JPanel();
                     panelExit.setLayout(new GridLayout());
                     JButton confirmButton = new JButton("Confirmar");
@@ -411,100 +394,83 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
                     panelExit.add(confirmButton);
                     panelExit.add(cancelButton);
-                    
                     dialogExit.add(panelExit, BorderLayout.NORTH);
                     dialogExit.setLocationRelativeTo(null);
                     dialogExit.setVisible(true);
-                    dialogExit.setLayout(new BorderLayout());
                     newMessage = null;
-                break;
-            
+                    break;
+
                 default:
                     String isCommand = message.substring(0, 1);
                     if (isCommand.equals("/")) {
-                        message = message+" ";
-                        try{
+                        message = message + " ";
+                        try {
                             String command = message.substring(0, message.indexOf(" "));
-                            System.err.println("Comand "+ command);
+                            System.err.println("Comand " + command);
                             String username = message.substring(message.indexOf(" "));
-                            if (command.trim().equals("/accept")){
-
+                            if (command.trim().equals("/accept")) {
                                 if (userFound.equals(chat.admin)) {
-                                    System.err.println("User "+ username);
-                                    User userToAccept = chat.pendingUsers.stream().filter(u -> u.name.equals(username.trim())).findFirst().orElse(null);
+                                    System.err.println("User " + username);
+                                    User userToAccept = chat.pendingUsers.stream()
+                                            .filter(u -> u.name.equals(username.trim())).findFirst().orElse(null);
                                     if (userToAccept != null) {
-                                        this.acceptInviteGroup(userToAccept.name , chat);
-                                        newMessage = new Messages(userFound, "Usuário "+userToAccept.name+" foi admitido no grupo pelo administrador.");
+                                        this.acceptInviteGroup(userToAccept.name, chat);
+                                        newMessage = new Messages(userFound, "Usuário " + userToAccept.name
+                                                + " foi admitido no grupo pelo administrador.");
                                         chat.messages.add(newMessage);
-                                    }
-                                    else{
-                                        JOptionPane.showMessageDialog(inputPanel, "Nome de usuário inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
-                                         
+                                    } else {
+                                        JOptionPane.showMessageDialog(inputPanel, "Nome de usuário inválido!", "Erro",
+                                                JOptionPane.ERROR_MESSAGE);
                                         newMessage = new Messages(userFound, message);
                                         chat.messages.add(newMessage);
                                     }
-                                    
-                                }
-                                else{
-                                     
+                                } else {
                                     newMessage = new Messages(userFound, message);
                                     chat.messages.add(newMessage);
                                 }
-                            }
-                            else if (command.trim().equals("/ban")) {
+                            } else if (command.trim().equals("/ban")) {
                                 if (userFound.equals(chat.admin)) {
-                                    System.err.println("User "+ username);
-                                    User userToRemove = chat.members.stream().filter(u -> u.name.equals(username.trim())).findFirst().orElse(null);
+                                    System.err.println("User " + username);
+                                    User userToRemove = chat.members.stream()
+                                            .filter(u -> u.name.equals(username.trim())).findFirst().orElse(null);
                                     if (userToRemove != null && userToRemove != userFound) {
-                                        this.removeUserGroup(userToRemove.name , chat);
-                                         
-                                        newMessage = new Messages(userFound, "Usuário "+userToRemove.name+" foi removido do grupo pelo administrador");
+                                        this.removeUserGroup(userToRemove.name, chat);
+                                        newMessage = new Messages(userFound, "Usuário " + userToRemove.name
+                                                + " foi removido do grupo pelo administrador");
                                         chat.messages.add(newMessage);
-                                    }
-                                    else{
-                                        JOptionPane.showMessageDialog(inputPanel, "Erro ao Remover usário!", "Erro", JOptionPane.ERROR_MESSAGE);
-                                         
+                                    } else {
+                                        JOptionPane.showMessageDialog(inputPanel, "Erro ao Remover usário!", "Erro",
+                                                JOptionPane.ERROR_MESSAGE);
                                         newMessage = new Messages(userFound, message);
                                         chat.messages.add(newMessage);
                                     }
-                                }
-                                else{
+                                } else {
                                     newMessage = new Messages(userFound, message);
                                     chat.messages.add(newMessage);
                                 }
-                                    
-                            }   
-                            else{
-                                 
+                            } else {
                                 newMessage = new Messages(userFound, message);
                                 chat.messages.add(newMessage);
                             }
-                        }
-                        catch (RemoteException e){
-                             
+                        } catch (RemoteException e) {
                             newMessage = new Messages(userFound, message);
                             chat.messages.add(newMessage);
                         }
-                        
-                    }    
-                    else{
-                         
+                    } else {
                         newMessage = new Messages(userFound, message);
                         chat.messages.add(newMessage);
                     }
-
-                    
-                break;
+                    break;
             }
 
-             for (User groupUser : chat.members) {
-            if (groupUser.getClient() != null) {
-                if (groupUser.getClient().getCurrentChatId().equals(chat.chatId ) && newMessage != null) {
-                    groupUser.getClient().receiveMessage(newMessage);
+            for (User groupUser : chat.members) {
+                if (groupUser.getClient() != null) {
+                    if (groupUser.getClient().getCurrentChatId().equals(chat.chatId) && newMessage != null) {
+                        groupUser.getClient().receiveMessage(newMessage);
+                    }
                 }
             }
-        }
-            
+
         } else {
             Chat privateGroup = privateGroups.stream()
                     .filter(other -> chatParam.getChatId().equals(other.getChatId()))
@@ -517,8 +483,8 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
             }
 
             for (User groupUser : chatParam.members) {
-                if (groupUser.getClient() != null) {
-                    if (groupUser.getClient().getCurrentChatId().equals(chatParam.chatId ) && newMessage != null) {
+                if (groupUser.getClient() != null && groupUser.getClient().getCurrentChatId() != null) {
+                    if (groupUser.getClient().getCurrentChatId().equals(chatParam.chatId) && newMessage != null) {
                         groupUser.getClient().receiveMessage(newMessage);
                     }
                 }
