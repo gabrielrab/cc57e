@@ -21,7 +21,7 @@ Lista de comandos utilizados no aplicativo
 
 > Caso o administrador do grupo saia, o aplicativo deve decidir quem será o novo administrador, ou se o grupo seja eliminado. Tal opção pode ser ajustada no momento da criação do chat em grupo.
 
-### Diagrama de sequência
+### Diagrama de atividades
 
 ```mermaid
 ---
@@ -60,6 +60,62 @@ flowchart TD
     S --> U{Administrador do grupo sai?}
     U -->|Sim| V[Designar novo administrador ou eliminar grupo]
     U -->|Não| H
+```
+
+### Diagrama de sequência
+
+```mermaid
+sequenceDiagram
+    participant Usuário
+    participant AplicativoWhatsUT
+    participant ServidorWhatsUT
+    participant CriadorDoGrupo
+    participant OutroUsuário
+
+    Usuário->>AplicativoWhatsUT: Abre aplicativo
+    AplicativoWhatsUT->>Usuário: Tem conta? (Sim/Não)
+    Usuário->>AplicativoWhatsUT: Sim
+
+    AplicativoWhatsUT->>Usuário: Solicita credenciais
+    Usuário->>AplicativoWhatsUT: Envia credenciais
+    AplicativoWhatsUT->>ServidorWhatsUT: Autentica usuário
+    ServidorWhatsUT->>AplicativoWhatsUT: Autenticação bem-sucedida
+
+    AplicativoWhatsUT->>Usuário: Exibir lista de usuários
+    AplicativoWhatsUT->>ServidorWhatsUT: Solicita lista de grupos
+    ServidorWhatsUT->>AplicativoWhatsUT: Envia lista de grupos
+    AplicativoWhatsUT->>Usuário: Exibir lista de grupos
+
+    Usuário->>AplicativoWhatsUT: Seleciona grupo
+    AplicativoWhatsUT->>ServidorWhatsUT: Solicita entrada no grupo
+    ServidorWhatsUT->>CriadorDoGrupo: Notifica solicitação de entrada
+    CriadorDoGrupo->>ServidorWhatsUT: Aprova solicitação
+    ServidorWhatsUT->>AplicativoWhatsUT: Aprovação recebida
+    AplicativoWhatsUT->>Usuário: Entrar no grupo
+
+    Usuário->>AplicativoWhatsUT: Iniciar chat em grupo
+    AplicativoWhatsUT->>ServidorWhatsUT: Enviar mensagem ao grupo
+    ServidorWhatsUT->>CriadorDoGrupo: Notificar nova mensagem
+    ServidorWhatsUT->>OutroUsuário: Notificar nova mensagem
+
+    Usuário->>AplicativoWhatsUT: Seleciona chat privado
+    AplicativoWhatsUT->>OutroUsuário: Notificar nova mensagem
+    OutroUsuário->>AplicativoWhatsUT: Recebe notificação
+    OutroUsuário->>AplicativoWhatsUT: Lê mensagem
+
+    Usuario->>AplicativoWhatsUT: Realizar cadastro
+    AplicativoWhatsUT->>ServidorWhatsUT: Solicita cadastro
+    ServidorWhatsUT->>AplicativoWhatsUT: Cadastro realizado
+    AplicativoWhatsUT->>Usuário: Exibir lista de usuários e grupos
+
+    CriadorDoGrupo->>ServidorWhatsUT: Adicionar/remover usuários do grupo
+    ServidorWhatsUT->>AplicativoWhatsUT: Atualização do grupo
+    AplicativoWhatsUT->>Usuário: Exibir atualização do grupo
+
+    CriadorDoGrupo->>ServidorWhatsUT: Sair do grupo
+    ServidorWhatsUT->>AplicativoWhatsUT: Designar novo administrador ou eliminar grupo
+    AplicativoWhatsUT->>Usuário: Exibir atualização do grupo
+
 ```
 
 ### Tecnologias utilizadas
