@@ -8,6 +8,8 @@ import com.edu.utfpr.core.exceptions.InvalidUserOrPasswordException;
 import com.edu.utfpr.core.exceptions.UserAlreadyRegisteredException;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -16,6 +18,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -68,12 +71,13 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
         UUID guid = UUID.randomUUID();
 
         Chat chat = new Chat(
-                guid,
-                chatName,
-                creator,
-                creator,
-                true,
-                exitAdminMethodRandom);
+            guid,
+            chatName,
+            creator,
+            creator,
+            true,
+            exitAdminMethodRandom);
+
         groups.add(chat);
         updatePublicGroupList();
         updateMyChatsList(creator);
@@ -81,28 +85,37 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
 
 
     @Override
-    public void createInviteGroup(String userName, Chat chat) throws RemoteException {
+    public void createInviteGroup(String userName, Chat chatParam) throws RemoteException {
         User userParam = users.stream().filter(user -> user.getName().equals(userName)).findFirst().orElse(null);
+        Chat chat = groups.stream().filter(chats -> chats.getName().equals(chatParam.name)).findFirst().orElse(null);
         Boolean hasInvite = chat.pendingUsers.contains(userParam);
         Boolean isIn = chat.members.contains(userParam);
         if (!hasInvite && !isIn) {
             chat.pendingUsers.add(userParam);
+            Integer indexChat = groups.indexOf(chat);
+            groups.set(indexChat, chat);
+            updatePublicGroupList();
         }
         System.err.println("Lista de pedidos" + chat.pendingUsers);
     }
 
     @Override
-    public void acceptInviteGroup(String userName, Chat chat) throws RemoteException {
+    public void acceptInviteGroup(String userName, Chat chatParam) throws RemoteException {
 
-        User userParam = users.stream().filter(user -> user.getName().equals(userName)).findFirst().orElse(null);
+        Chat chat = groups.stream().filter(chats -> chats.getName().equals(chatParam.name)).findFirst().orElse(null);
+        User userParam = chat.pendingUsers.stream().filter(user -> user.getName().equals(userName)).findFirst().orElse(null);
         int indexUser = chat.pendingUsers.indexOf(userParam);
 
-        chat.pendingUsers.remove(indexUser);
-        chat.members.add(userParam);
-
-        updatePublicGroupList();
-        updateMyChatsList(userParam);
-        
+        if (userParam != null) {
+            chat.pendingUsers.remove(indexUser);
+            chat.members.add(userParam);
+    
+            Integer indexChat = groups.indexOf(chat);
+            groups.set(indexChat, chat);
+    
+            updatePublicGroupList();
+            updateMyChatsList(userParam);
+        } 
     }
 
     @Override
@@ -131,9 +144,10 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
     }
 
     @Override
-    public void leaveGroup(String UserName, Chat chat) throws RemoteException {
+    public void leaveGroup(String UserName, Chat chatParam) throws RemoteException {
 
         User currentUser = users.stream().filter(user -> user.getName().equals(UserName)).findFirst().orElse(null);
+        Chat chat = groups.stream().filter(chats -> chats.getName().equals(chatParam.name)).findFirst().orElse(null);
 
         boolean isAdmin = false;
         if (chat.admin == currentUser) {
@@ -264,32 +278,127 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
     }
 
     @Override
-    public void sendMessage(String user, Chat chat, String message) throws RemoteException {
+    public void sendMessage(String user, Chat chatParam, String message, JPanel inputPanel) throws RemoteException {
         User userFound = users.stream().filter(u -> u.name.equals(user)).findFirst().orElse(null);
+        Chat chat = groups.stream().filter(chats -> chats.getName().equals(chatParam.name)).findFirst().orElse(null);
         Messages newMessage;
 
         if (chat.isGroup) {
             switch (message) {
                 case "/members":
-                    JDialog dialog = new JDialog();
-                    dialog.setTitle("Lista de membros do grupo "+ chat.name);
+                    JDialog dialog = new JDialog((Frame) null, "Criar Novo Grupo", true);
+                    dialog.setTitle("Lista de membros - "+ chat.name);
+                    dialog.setAlwaysOnTop(true);
+                    dialog.setSize(200 , 400);
                     JPanel panel = new JPanel();
                     panel.setLayout(new GridLayout());
                     for (User member : chat.members) {
-                        JLabel memberName = new JLabel("User "+ member.name);
-                        panel.add(memberName);
+                        if (member.equals(chat.admin)) {
+                            JLabel memberName = new JLabel("Admin: "+ member.name+"; ");
+                            panel.add(memberName);
+                        }
+                        else{
+                            JLabel memberName = new JLabel("User: "+ member.name+"; ");
+                            panel.add(memberName);
+                        }
+                        
                     }
-                    dialog.add(panel, BorderLayout.CENTER);
+                    dialog.add(panel, BorderLayout.NORTH);
+                    dialog.setLocationRelativeTo(null);
                     dialog.setVisible(true);
                     dialog.setLayout(new BorderLayout());
-                    dialog.setAlwaysOnTop(true);
                     newMessage = null;
+                break;
+
+                case "/invites":
+
+                    if (userFound.equals(chat.admin)) {
+                        JDialog dialogInvites = new JDialog((Frame) null, "Criar Novo Grupo", true);
+                        dialogInvites.setTitle("Lista de pedidos - "+ chat.name);
+                        dialogInvites.setAlwaysOnTop(true);
+                        dialogInvites.setSize(200 , 400);
+                        JPanel panelInvites = new JPanel();
+
+                        panelInvites.setLayout(new GridLayout());
+                        GridBagConstraints constraints = new GridBagConstraints();
+                        constraints.fill = GridBagConstraints.HORIZONTAL;
+
+                        constraints.gridwidth = 2;
+                        constraints.gridx = 0;
+                        constraints.gridy = 0;
+                        Integer i = 0;
+                        for (User member : chat.pendingUsers) {
+                            JLabel memberName = new JLabel("Username: "+ member.name+"; ");
+                            panelInvites.add(memberName,constraints);
+                            i++;
+                            constraints.gridx = 0;
+                            constraints.gridy = i; 
+                        }
+                        dialogInvites.add(panelInvites, BorderLayout.NORTH);
+                        dialogInvites.setLocationRelativeTo(null);
+                        dialogInvites.setVisible(true);
+                        dialogInvites.setLayout(new BorderLayout());
+                        newMessage = null;
+                    }
+                    else{
+                        Chat group = groups.get(groups.indexOf(chat));
+                        newMessage = new Messages(userFound, message);
+                        group.messages.add(newMessage);
+                    }
+
                 break;
             
                 default:
-                    Chat group = groups.get(groups.indexOf(chat));
-                    newMessage = new Messages(userFound, message);
-                    group.messages.add(newMessage);
+                    String isCommand = message.substring(0, 1);
+                    if (isCommand.equals("/")) {
+                        try{
+                            String command = message.substring(0, 8);
+                            System.err.println("Comand "+ command);
+                            String username = message.substring(8);
+                            if (command.trim().equals("/accept")){
+
+                                if (userFound.equals(chat.admin)) {
+                                    System.err.println("User "+ username);
+                                    User userToAccept = chat.pendingUsers.stream().filter(u -> u.name.equals(username)).findFirst().orElse(null);
+                                    if (userToAccept != null) {
+                                        this.acceptInviteGroup(userToAccept.name , chat);
+                                        JOptionPane.showMessageDialog(inputPanel, "Usuário aceito bo grupo!", "Pedido aceito", JOptionPane.INFORMATION_MESSAGE);
+                                        newMessage = null;
+                                    }
+                                    else{
+                                        JOptionPane.showMessageDialog(inputPanel, "Nome de usuário inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
+                                        Chat group = groups.get(groups.indexOf(chat));
+                                        newMessage = new Messages(userFound, message);
+                                        group.messages.add(newMessage);
+                                    }
+                                    
+                                }
+                                else{
+                                    Chat group = groups.get(groups.indexOf(chat));
+                                    newMessage = new Messages(userFound, message);
+                                    group.messages.add(newMessage);
+                                }
+                            }
+                            else{
+                                Chat group = groups.get(groups.indexOf(chat));
+                                newMessage = new Messages(userFound, message);
+                                group.messages.add(newMessage);
+                            }
+                        }
+                        catch (RemoteException e){
+                            Chat group = groups.get(groups.indexOf(chat));
+                            newMessage = new Messages(userFound, message);
+                            group.messages.add(newMessage);
+                        }
+                        
+                    }    
+                    else{
+                        Chat group = groups.get(groups.indexOf(chat));
+                        newMessage = new Messages(userFound, message);
+                        group.messages.add(newMessage);
+                    }
+
+                    
                 break;
             }
             

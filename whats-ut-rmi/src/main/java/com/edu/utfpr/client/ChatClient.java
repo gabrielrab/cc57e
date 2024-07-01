@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import javax.swing.JPanel;
+
 public class ChatClient extends UnicastRemoteObject implements IChatClient {
     private final String hostName = "localhost";
     private final List<Consumer<List<User>>> changeUserListListeners = new ArrayList<>();
@@ -104,8 +106,8 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
         }
     }
 
-    public void sendMessage(String message) throws RemoteException {
-        server.sendMessage(userName, currentChat, message);
+    public void sendMessage(String message, JPanel inputPanel) throws RemoteException {
+        server.sendMessage(userName, currentChat, message, inputPanel);
     }
 
     @Override

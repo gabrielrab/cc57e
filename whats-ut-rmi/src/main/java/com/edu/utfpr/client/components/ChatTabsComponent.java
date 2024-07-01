@@ -101,11 +101,11 @@ public class ChatTabsComponent extends JPanel {
                     Chat chat = groupsList.getSelectedValue();
                     try {
                         chatClient.sendInviteAdmin(chatClient.userName, chat);
-                        JOptionPane.showMessageDialog(null, "Seu pedido para entrar no grupo foi enviado. Aguarde até que o administrador aceite sua entrada.", "Pedido envidado",
+                        JOptionPane.showMessageDialog(tabbedPane, "Seu pedido para entrar no grupo foi enviado. Aguarde até que o administrador aceite sua entrada.", "Pedido envidado",
                         JOptionPane.INFORMATION_MESSAGE);
                     } catch (RemoteException ex) {
                         ex.printStackTrace();
-                        JOptionPane.showMessageDialog(null, "Erro ao enviar pedido.", "Erro",
+                        JOptionPane.showMessageDialog(tabbedPane, "Erro ao enviar pedido.", "Erro",
                         JOptionPane.ERROR_MESSAGE);
                     }
                 }

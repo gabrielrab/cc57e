@@ -11,6 +11,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import javax.swing.JPanel;
+
 public interface IChatServer extends Remote {
 
     void createChatGroup(String chatName, String creator, boolean exitAdminMethod)
@@ -18,7 +20,7 @@ public interface IChatServer extends Remote {
 
     void createPrivateChat(String user1, String user2) throws RemoteException;
 
-    void sendMessage(String user, Chat chat, String message) throws RemoteException;
+    void sendMessage(String user, Chat chat, String message, JPanel inputPanel) throws RemoteException;
 
     void registerUser(String userName, String password)
             throws RemoteException, UserAlreadyRegisteredException;

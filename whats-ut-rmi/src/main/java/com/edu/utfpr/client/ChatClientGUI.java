@@ -85,10 +85,11 @@ public class ChatClientGUI extends JFrame {
                 }
                 else{
                     try {
-                        chatClient.sendMessage(message);
+                        chatClient.sendMessage(message , inputPanel);
                         textField.setText("");  
                     } catch (RemoteException ex) {
                         ex.printStackTrace();
+                        textField.setText("");
                     }
 
                 }
