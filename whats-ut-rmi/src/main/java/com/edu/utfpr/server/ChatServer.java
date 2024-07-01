@@ -319,7 +319,11 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
     @Override
     public void sendMessage(String user, Chat chatParam, String message, JPanel inputPanel) throws RemoteException {
         User userFound = users.stream().filter(u -> u.name.equals(user)).findFirst().orElse(null);
-        Chat chat = groups.stream().filter(chats -> chats.getName().equals(chatParam.name)).findFirst().orElse(null);
+        Chat chat;
+        chat = groups.stream().filter(chats -> chats.getName().equals(chatParam.name)).findFirst()
+                .orElse(privateGroups.stream().filter(chats -> chats.getName().equals(chatParam.name)).findFirst()
+                        .orElse(null));
+
         Messages newMessage;
 
         if (chatParam.isGroup) {
@@ -482,9 +486,9 @@ public class ChatServer extends UnicastRemoteObject implements IChatServer {
                 privateGroup.messages.add(newMessage);
             }
 
-            for (User groupUser : chatParam.members) {
+            for (User groupUser : privateGroup.members) {
                 if (groupUser.getClient() != null && groupUser.getClient().getCurrentChatId() != null) {
-                    if (groupUser.getClient().getCurrentChatId().equals(chatParam.chatId) && newMessage != null) {
+                    if (groupUser.getClient().getCurrentChatId().equals(privateGroup.chatId) && newMessage != null) {
                         groupUser.getClient().receiveMessage(newMessage);
                     }
                 }

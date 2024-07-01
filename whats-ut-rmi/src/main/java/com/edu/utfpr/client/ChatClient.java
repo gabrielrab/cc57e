@@ -100,9 +100,13 @@ public class ChatClient extends UnicastRemoteObject implements IChatClient {
     }
 
     public void setCurrentChat(Chat chat) throws RemoteException {
-        currentChat = chat;
+        server.getMyChats(userName).forEach(c -> {
+            if (c.chatId.equals(chat.chatId)) {
+                currentChat = c;
+            }
+        });
         for (Consumer<Chat> listener : changeCurrentChatListeners) {
-            listener.accept(chat);
+            listener.accept(currentChat);
         }
     }
 
