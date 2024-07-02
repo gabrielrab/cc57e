@@ -121,7 +121,8 @@ public class LoginAndRegisterGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Erro ao registrar usuário", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Preencha os campos de usuário e senha corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Preencha os campos de usuário e senha corretamente.", "Erro",
+                    JOptionPane.ERROR_MESSAGE);
         }
 
     }

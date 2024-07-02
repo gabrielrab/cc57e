@@ -101,12 +101,14 @@ public class ChatTabsComponent extends JPanel {
                     Chat chat = groupsList.getSelectedValue();
                     try {
                         chatClient.sendInviteAdmin(chatClient.userName, chat);
-                        JOptionPane.showMessageDialog(tabbedPane, "Seu pedido para entrar no grupo foi enviado. Aguarde até que o administrador aceite sua entrada.", "Pedido envidado",
-                        JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(tabbedPane,
+                                "Seu pedido para entrar no grupo foi enviado. Aguarde até que o administrador aceite sua entrada.",
+                                "Pedido envidado",
+                                JOptionPane.INFORMATION_MESSAGE);
                     } catch (RemoteException ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(tabbedPane, "Erro ao enviar pedido.", "Erro",
-                        JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -120,7 +122,7 @@ public class ChatTabsComponent extends JPanel {
         return new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                                                          boolean cellHasFocus) {
+                    boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 setText(((User) value).getName());
                 return this;
@@ -132,7 +134,7 @@ public class ChatTabsComponent extends JPanel {
         return new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                                                          boolean cellHasFocus) {
+                    boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 setText(((Chat) value).getName());
                 return this;

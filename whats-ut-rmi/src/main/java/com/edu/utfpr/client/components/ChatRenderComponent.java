@@ -14,11 +14,13 @@ public class ChatRenderComponent extends JPanel {
         chatClient.addChangeCurrentChatListener(chat -> {
             textArea.setText("");
             if (chat != null) {
-                chat.getMessages().forEach(message -> textArea.append(message.getSender().getName() + ": " + message.getContent() + "\n"));
+                chat.getMessages().forEach(
+                        message -> textArea.append(message.getSender().getName() + ": " + message.getContent() + "\n"));
             }
         });
 
-        chatClient.addOnReceiveMessageListener(message -> textArea.append(message.getSender().getName() + ": " + message.getContent() + "\n"));
+        chatClient.addOnReceiveMessageListener(
+                message -> textArea.append(message.getSender().getName() + ": " + message.getContent() + "\n"));
     }
 
     private void initComponent() {

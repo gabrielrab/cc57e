@@ -15,11 +15,9 @@ public class NewGroupDialog {
         dialog.setLayout(new BorderLayout());
         dialog.setAlwaysOnTop(true);
 
-        // Form Panel
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridLayout(5, 2));
 
-        // Form components
         JLabel nameLabel = new JLabel("Nome do Grupo:");
         JTextField nameField = new JTextField();
 
@@ -41,7 +39,6 @@ public class NewGroupDialog {
 
         dialog.add(formPanel, BorderLayout.CENTER);
 
-        // Button Panel
         JPanel buttonPanel = new JPanel();
         JButton createButton = new JButton("Criar");
         JButton cancelButton = new JButton("Cancelar");
@@ -50,11 +47,9 @@ public class NewGroupDialog {
             String groupName = nameField.getText();
             Boolean radioRamdom = radio1.isSelected();
             if (!groupName.trim().isEmpty()) {
-                // Aqui você pode adicionar a lógica para criar o grupo
                 try {
                     chatClient.createChatGroup(groupName, chatClient.userName, radioRamdom);
                 } catch (RemoteException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                     JOptionPane.showMessageDialog(dialog, "Erro ao criar grupo!", "Erro",
                             JOptionPane.ERROR_MESSAGE);
